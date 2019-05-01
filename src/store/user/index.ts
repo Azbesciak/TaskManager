@@ -1,5 +1,5 @@
 import * as firebase from 'firebase';
-import router from '@/router';
+import {router} from '@/router';
 
 export const userStore = {
     state: {
@@ -12,10 +12,7 @@ export const userStore = {
     mutations: {
         setUser(state, payload?: User) {
             state.user = payload;
-            console.log("SETTING USEER", payload);
-            setTimeout(() => {
-                router.push('/');
-            })
+            router.push('/');
         },
     },
     actions: {

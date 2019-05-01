@@ -4,20 +4,23 @@ import store from '@/store/store';
 
 Vue.use(Router);
 
-const router = new Router({
+export const AUTH_PAGE = '/signin';
+export const HOME_PAGE = '/dashboard';
+
+export const router = new Router({
     mode: 'history',
     base: process.env.BASE_URL,
     routes: [
         {
             path: '*',
-            redirect: '/home',
+            redirect: HOME_PAGE,
         },
         {
             path: '/',
-            redirect: '/home',
+            redirect: HOME_PAGE,
         },
         {
-            path: '/signin',
+            path: AUTH_PAGE,
             name: 'Login',
             component: () => import(/* webpackChunkName: "login" */ './views/Login.vue'),
         },
@@ -27,8 +30,8 @@ const router = new Router({
             component: () => import(/* webpackChunkName: "signUp" */ './views/SignUp.vue'),
         },
         {
-            path: '/home',
-            name: 'Home',
+            path: HOME_PAGE,
+            name: 'Dashboard',
             component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
             meta: {
                 requiresAuth: true,
@@ -39,17 +42,10 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     const currentUser = store.getters.isUserSignIn;
-    console.log("CURRENT USER LOGGED IN", currentUser)
     const requiresAuth = to.matched.some(r => r.meta.requiresAuth);
     if (requiresAuth && !currentUser) {
-        next('/signin');
+        next(AUTH_PAGE);
     } else {
         next();
     }
 });
-
-router.onError((err => console.log("ERROR", err)))
-
-setInterval(() => console.log("CURRENT ROUTE", router.currentRoute), 1000)
-
-export default router;
