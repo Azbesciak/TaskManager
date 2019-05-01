@@ -11,45 +11,32 @@
                     <v-card-text>
                         <v-container>
                             <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="signUp">
-                                <v-layout row>
-                                    <v-flex xs12>
-                                        <v-text-field prepend-icon="person" name="email" label="Email" id="email"
-                                                      v-model="user.email" type="email" :rules="rules.email"
-                                                      required></v-text-field>
-                                    </v-flex>
-                                </v-layout>
-                                <v-layout row>
-                                    <v-flex xs12>
-                                        <v-text-field prepend-icon="lock" name="password" label="Password" id="password"
-                                                      v-model="user.password" :rules="rules.password"
-                                                      type="password" required></v-text-field>
-                                    </v-flex>
-                                </v-layout>
-                                <v-layout row>
-                                    <v-flex xs12>
-                                        <v-text-field
-                                                prepend-icon="lock" name="passwordRepeat" label="PasswordRepeat"
-                                                id="passwordRepeat"
-                                                type="password" required v-model="user.passwordRepeat"
-                                                :rules="rules.passwordRepeat"></v-text-field>
-                                    </v-flex>
-                                </v-layout>
-                                <v-layout row>
-                                    <v-flex xs12>
-                                        <div class="text-xs-center">
-                                            <v-btn type="submit" :disabled="loading || !valid" :loading="loading">
-                                                Sign up
-                                                <v-icon right>lock_open</v-icon>
-                                                <span slot="loader" class="custom-loader">
-                        <v-icon light>cached</v-icon>
-                       </span>
-                                            </v-btn>
-                                        </div>
-                                        <div class="text-xs-center">Go to
-                                            <router-link to="/signin">Sign In</router-link>
-                                        </div>
-                                    </v-flex>
-                                </v-layout>
+
+                                <v-text-field
+                                        prepend-icon="person" name="email" label="Email" id="email"
+                                        v-model="user.email" type="email" :rules="rules.email"
+                                        required></v-text-field>
+                                <v-text-field
+                                        prepend-icon="lock" name="password" label="Password" id="password"
+                                        v-model="user.password" :rules="rules.password"
+                                        type="password" required></v-text-field>
+                                <v-text-field
+                                        prepend-icon="lock" name="passwordRepeat" label="PasswordRepeat"
+                                        id="passwordRepeat"
+                                        type="password" required v-model="user.passwordRepeat"
+                                        :rules="rules.passwordRepeat"></v-text-field>
+                                <div class="text-xs-center">
+                                    <v-btn type="submit" :disabled="loading || !valid" :loading="loading">
+                                        Sign up
+                                        <v-icon right>lock_open</v-icon>
+                                        <span slot="loader" class="custom-loader">
+                                            <v-icon light>cached</v-icon>
+                                        </span>
+                                    </v-btn>
+                                </div>
+                                <div class="text-xs-center">Go to
+                                    <router-link to="/signin">Sign In</router-link>
+                                </div>
                             </v-form>
                         </v-container>
                     </v-card-text>
