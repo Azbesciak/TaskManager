@@ -1,25 +1,55 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
+import store from '@/store/store';
 
 Vue.use(Router);
 
-export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
-    },
-  ],
+const router = new Router({
+    mode: 'history',
+    base: process.env.BASE_URL,
+    routes: [
+        {
+            path: '*',
+            redirect: '/home',
+        },
+        {
+            path: '/',
+            redirect: '/home',
+        },
+        {
+            path: '/signin',
+            name: 'Login',
+            component: () => import(/* webpackChunkName: "login" */ './views/Login.vue'),
+        },
+        {
+            path: '/signup',
+            name: 'SignUp',
+            component: () => import(/* webpackChunkName: "signUp" */ './views/SignUp.vue'),
+        },
+        {
+            path: '/home',
+            name: 'Home',
+            component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
+            meta: {
+                requiresAuth: true,
+            },
+        },
+    ],
 });
+
+router.beforeEach((to, from, next) => {
+    const currentUser = store.getters.isUserSignIn;
+    console.log("CURRENT USER LOGGED IN", currentUser)
+    const requiresAuth = to.matched.some(r => r.meta.requiresAuth);
+    if (requiresAuth && !currentUser) {
+        next('/signin');
+    } else {
+        next();
+    }
+});
+
+router.onError((err => console.log("ERROR", err)))
+
+setInterval(() => console.log("CURRENT ROUTE", router.currentRoute), 1000)
+
+export default router;
