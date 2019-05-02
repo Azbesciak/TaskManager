@@ -15,11 +15,7 @@ export const dashboardStore = {
         dashboard: null,
     },
     getters: {
-        dashboard: state => state.dashboard,
-        dashboards: state => {
-            console.log("CALLED",state.user && state.user.dashboards);
-            return state.user && state.user.dashboards || null
-        }
+        dashboard: state => state.dashboard
     },
     actions: {
         cancelDashboardChanges({commit}, {dashboardId}: DashBoardData) {
@@ -30,30 +26,32 @@ export const dashboardStore = {
             const dashBoard = dashboards().child(dashboardId);
             dashBoard.on('value', (a, b) => console.log('a b', a, b));
         },
-        createDashboard({commit, state, dispatch}, {name}: DashboardCreateRequest) {
-            commit('setLoading', true)
-            const owner = state.user;
-            return dispatch('addDashboard', {name}).then(v => {
-                console.log('new dashboard', v);
-                commit('setLoading', false);
-            }).catch(e => {
-                commit('setError', e);
-                commit('setLoading', false);
-            })
-        // .then(r => )
-        //     dashboards().push({name, owner: owner.id, users: [owner.id]});
+        createDashboard({commit, dispatch, getters}, {name}: DashboardCreateRequest) {
+            commit('setLoading', true);
+            const owner = getters.user.id;
+            return dispatch('addDashboard', {name})
+                .then(v =>
+                    dashboards().child(v.key)
+                        .set({owner, name})
+                        .then(() => v)
+                )
+                .then(v => {
+                    commit('setLoading', false);
+                }).catch(e => {
+                    commit('setError', e);
+                    commit('setLoading', false);
+                });
         },
         addDashboard({commit, getters}: any, {name}: DashboardCreateRequest) {
-            return getters.currentUserStore.child('dashboards').push({name})
+            return getters.currentUserStore.child('dashboards').push({name});
         }
     },
 };
 
 export interface DashBoardData {
-    dashboardId: string;
     owner?: string;
     name: string;
-    users: {[key: string]: string}
+    users: { [key: string]: string }
 }
 
 export interface DashboardCreateRequest {
