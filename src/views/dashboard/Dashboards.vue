@@ -14,12 +14,11 @@
 </template>
 <script>
     import CreateDashboard from "./CreateDashboard";
-    import DashboardsList from "./DashboardsList";
+    import DashboardsList from "../../components/DashboardsList";
 
     export default {
         components: {
-            'create-dashboard': CreateDashboard,
-            'dashboards-list': DashboardsList
+            'create-dashboard': CreateDashboard
         }
     }
 </script>

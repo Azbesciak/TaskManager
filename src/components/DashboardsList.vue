@@ -1,11 +1,10 @@
 <template>
-    <v-list subheader v-if="user">
+    <v-list subheader>
         <v-subheader>Your Dashboards</v-subheader>
         <v-list-tile
                 v-for="(value, key) in user.dashboards"
                 :key="key"
-                avatar
-                @click=""
+                @click="goToDashboard(key, value.name)"
         >
             <v-list-tile-content>
                 <v-list-tile-title v-html="value.name"></v-list-tile-title>
@@ -15,6 +14,7 @@
 </template>
 <script>
     import {mapGetters} from "vuex";
+    import {HOME_PAGE} from "../router";
 
     export default {
         data: () => ({
@@ -22,6 +22,11 @@
         }),
         computed: {
             ...mapGetters(["user"])
+        },
+        methods: {
+            goToDashboard(id, name) {
+                this.$router.push(`${HOME_PAGE}/${id}/${name}`)
+            }
         }
     }
 </script>

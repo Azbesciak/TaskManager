@@ -31,11 +31,15 @@ export const router = new Router({
         },
         {
             path: HOME_PAGE,
-            name: 'Dashboard',
-            component: () => import(/* webpackChunkName: "home" */ './views/dashboard/Dashboards.vue'),
+            name: 'Dashboards',
+            component: () => import(/* webpackChunkName: "dashboards" */ './views/dashboard/Dashboards.vue'),
             meta: {
                 requiresAuth: true
             },
+        }, {
+            path: `${HOME_PAGE}/:id/:name`,
+            name: `Dashboard`,
+            component: () => import(/* webpackChunkName: "dashboard" */ './views/dashboard/Dashboard.vue')
         },
     ],
 });
