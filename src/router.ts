@@ -32,7 +32,7 @@ export const router = new Router({
         {
             path: HOME_PAGE,
             name: 'Dashboard',
-            component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
+            component: () => import(/* webpackChunkName: "home" */ './views/Dashboards.vue'),
             meta: {
                 requiresAuth: true,
             },
