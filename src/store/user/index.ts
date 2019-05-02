@@ -18,7 +18,7 @@ export const userStore = {
     getters: {
         user: state => state.user,
         isUserSignIn: state => state.user != null,
-        currentUserStore: state => usersStore().child(state.user.id)
+        currentUserStore: state => state.user && usersStore().child(state.user.id)
     },
     mutations: {
         setUser(state, payload?: User) {
