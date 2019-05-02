@@ -1,17 +1,11 @@
 <template>
     <v-container>
-        <v-layout row v-if="error">
-            <v-flex xs12 sm6 offset-sm3>
-                <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
-            </v-flex>
-        </v-layout>
         <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
                 <v-card>
                     <v-card-text>
                         <v-container>
                             <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="signUp">
-
                                 <v-text-field
                                         prepend-icon="person" name="email" label="Email" id="email"
                                         v-model="user.email" type="email" :rules="rules.email"
@@ -69,7 +63,7 @@
             };
         },
         computed: {
-            ...mapGetters(['loading', 'error']),
+            ...mapGetters(['loading']),
             valuesSet() {
                 return this.user.email && this.user.password && this.user.passwordRepeat
             }
@@ -79,9 +73,6 @@
                 if (this.$refs.form.validate()) {
                     this.$store.dispatch("signUpUser", this.user)
                 }
-            },
-            onDismissed() {
-                this.$store.dispatch('clearError')
             }
         }
     }

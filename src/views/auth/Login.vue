@@ -1,10 +1,5 @@
 <template>
     <v-container>
-        <v-layout row v-if="error">
-            <v-flex xs12 sm6 offset-sm3>
-                <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
-            </v-flex>
-        </v-layout>
         <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
                 <v-card>
@@ -56,9 +51,6 @@
 
     export default {
         name: 'login',
-        activated() {
-            this.onDismissed()
-        },
         data() {
             return {
                 user: {
@@ -73,7 +65,7 @@
             }
         },
         computed: {
-            ...mapGetters(["error", "loading"]),
+            ...mapGetters(["loading"]),
             valuesSet() {
                 return this.user.email && this.user.password
             }
@@ -87,9 +79,6 @@
             onSigninGoogle() {
                 const provider = new firebase.auth.GoogleAuthProvider();
                 this.$store.dispatch("loginOAuth", {provider})
-            },
-            onDismissed() {
-                this.$store.dispatch('clearError')
             }
         }
     }

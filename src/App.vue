@@ -4,6 +4,7 @@
         <main>
             <router-view></router-view>
         </main>
+        <error-alert></error-alert>
     </v-app>
 </template>
 

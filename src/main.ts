@@ -5,9 +5,9 @@ import {router} from './router';
 import store from './store/store';
 import './registerServiceWorker';
 import firebase from 'firebase';
-import AlertCmp from './components/Alert.vue';
+import ErrorAlert from './components/ErrorAlert.vue';
 
-Vue.component('app-alert', AlertCmp);
+Vue.component('error-alert', ErrorAlert);
 Vue.config.productionTip = false;
 
 const config = {
