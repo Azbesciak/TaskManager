@@ -25,10 +25,7 @@
                     </v-list-tile>
                 </template>
                 <template v-else>
-                    <v-list-tile vi
-                                 v-for="item in menuItems"
-                                 :key="item.title"
-                                 :to="item.link">
+                    <v-list-tile vi v-for="item in menuItems" :key="item.title" :to="item.link">
                         <v-list-tile-action>
                             <v-icon>{{ item.icon }}</v-icon>
                         </v-list-tile-action>
@@ -47,9 +44,7 @@
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-xs-only">
                 <template v-if="isUserSignIn">
-                    <v-btn
-                            flat
-                            @click="onLogout">
+                    <v-btn flat @click="onLogout">
                         <v-icon left>exit_to_app</v-icon>
                         Logout
                     </v-btn>
@@ -58,7 +53,6 @@
                             <v-list-tile-avatar v-if="user.photoUrl">
                                 <img :src="user.photoUrl">
                             </v-list-tile-avatar>
-
                             <v-list-tile-content>
                                 <v-list-tile-title>{{user.name || user.email}}</v-list-tile-title>
                             </v-list-tile-content>
@@ -66,20 +60,14 @@
                     </v-btn>
                 </template>
                 <template v-else>
-                    <v-btn flat
-                           v-for="item in menuItems"
-                           :key="item.title"
-                           :to="item.link">
+                    <v-btn flat v-for="item in menuItems" :key="item.title" :to="item.link">
                         <v-icon left dark>{{ item.icon }}</v-icon>
                         {{ item.title }}
                     </v-btn>
                 </template>
-
-
             </v-toolbar-items>
         </v-toolbar>
     </div>
-
 </template>
 
 <script>
