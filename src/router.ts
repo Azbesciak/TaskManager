@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Router from 'vue-router';
+import Router, {RawLocation} from 'vue-router';
 import store from '@/store/store';
 
 Vue.use(Router);
@@ -13,11 +13,11 @@ export const router = new Router({
     routes: [
         {
             path: '*',
-            redirect: HOME_PAGE,
+            redirect: HOME_PAGE
         },
         {
             path: '/',
-            redirect: HOME_PAGE,
+            redirect: HOME_PAGE
         },
         {
             path: AUTH_PAGE,
@@ -34,12 +34,11 @@ export const router = new Router({
             name: 'Dashboard',
             component: () => import(/* webpackChunkName: "home" */ './views/dashboard/Dashboards.vue'),
             meta: {
-                requiresAuth: true,
+                requiresAuth: true
             },
         },
     ],
 });
-
 router.beforeEach((to, from, next) => {
     const currentUser = store.getters.isUserSignIn;
     const requiresAuth = to.matched.some(r => r.meta.requiresAuth);
@@ -49,3 +48,14 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
+
+const oldPush = router.push.bind(router);
+router.push = (location, onComplete, onAbort) => {
+    const newRoute = router.resolve(location);
+    const authRequred = newRoute.route.meta.requiresAuth;
+    let newLocation: RawLocation = newRoute.location;
+    if (authRequred && !store.getters.isUserSignIn) {
+        newLocation = AUTH_PAGE;
+    }
+    oldPush(newLocation, onComplete, onAbort);
+};
