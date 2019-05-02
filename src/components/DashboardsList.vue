@@ -1,6 +1,7 @@
 <template>
     <v-list subheader>
         <v-subheader>Your Dashboards</v-subheader>
+        <v-divider></v-divider>
         <v-list-tile
                 v-for="(value, key) in user.dashboards"
                 :key="key"
