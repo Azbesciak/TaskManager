@@ -22,17 +22,17 @@ export const router = new Router({
         {
             path: AUTH_PAGE,
             name: 'Login',
-            component: () => import(/* webpackChunkName: "login" */ './views/Login.vue'),
+            component: () => import(/* webpackChunkName: "login" */ './views/auth/Login.vue'),
         },
         {
             path: '/signup',
             name: 'SignUp',
-            component: () => import(/* webpackChunkName: "signUp" */ './views/SignUp.vue'),
+            component: () => import(/* webpackChunkName: "signUp" */ './views/auth/SignUp.vue'),
         },
         {
             path: HOME_PAGE,
             name: 'Dashboard',
-            component: () => import(/* webpackChunkName: "home" */ './views/Dashboards.vue'),
+            component: () => import(/* webpackChunkName: "home" */ './views/dashboard/Dashboards.vue'),
             meta: {
                 requiresAuth: true,
             },

@@ -50,10 +50,9 @@
 </template>
 
 <script>
-    import firebase from 'firebase';
-    import {mapGetters} from "vuex";
     import {emailRules, passwordRules} from "./input-rules";
-    import store from "../store/store";
+    import * as firebase from "firebase";
+    import {mapGetters} from "vuex";
 
     export default {
         name: 'login',
