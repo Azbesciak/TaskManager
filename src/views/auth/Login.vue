@@ -20,7 +20,7 @@
                                         v-model="user.password"
                                         type="password" required :rules="rules.password"></v-text-field>
                                 <div class="text-xs-center">
-                                    <v-btn type="submit" :disabled="loading || !valid" :loading="loading">
+                                    <v-btn type="submit" :disabled="loading || !valid || !valuesSet" :loading="loading">
                                         Sign in
                                         <v-icon right>lock_open</v-icon>
                                         <span slot="loader" class="custom-loader">
@@ -72,7 +72,12 @@
                 valid: false,
             }
         },
-        computed: mapGetters(["error", "loading"]),
+        computed: {
+            ...mapGetters(["error", "loading"]),
+            valuesSet() {
+                return this.user.email && this.user.password
+            }
+        },
         methods: {
             onSignin() {
                 if (this.$refs.form.validate()) {

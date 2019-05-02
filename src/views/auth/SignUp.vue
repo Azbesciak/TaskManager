@@ -26,7 +26,7 @@
                                         type="password" required v-model="user.passwordRepeat"
                                         :rules="rules.passwordRepeat"></v-text-field>
                                 <div class="text-xs-center">
-                                    <v-btn type="submit" :disabled="loading || !valid" :loading="loading">
+                                    <v-btn type="submit" :disabled="loading || !valid || !valuesSet" :loading="loading">
                                         Sign up
                                         <v-icon right>lock_open</v-icon>
                                         <span slot="loader" class="custom-loader">
@@ -68,7 +68,12 @@
                 }
             };
         },
-        computed: mapGetters(['loading', 'error']),
+        computed: {
+            ...mapGetters(['loading', 'error']),
+            valuesSet() {
+                return this.user.email && this.user.password && this.user.passwordRepeat
+            }
+        },
         methods: {
             signUp() {
                 if (this.$refs.form.validate()) {
