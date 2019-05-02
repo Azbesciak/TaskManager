@@ -14,7 +14,7 @@
 </template>
 <script>
     import {mapGetters} from "vuex";
-    import {HOME_PAGE} from "../router";
+    import {goToDashboard, HOME_PAGE} from "../router";
 
     export default {
         data: () => ({
@@ -25,7 +25,7 @@
         },
         methods: {
             goToDashboard(id, name) {
-                this.$router.push(`${HOME_PAGE}/${id}/${name}`)
+                goToDashboard(id, name)
             }
         }
     }

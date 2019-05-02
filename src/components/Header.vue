@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <div>
         <v-navigation-drawer fixed temporary v-model="sideNav">
             <v-img :aspect-ratio="16/9" src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
@@ -17,6 +17,7 @@
             </v-img>
             <v-list>
                 <template v-if="isUserSignIn">
+                    <dashboards-list></dashboards-list>
                     <v-list-tile @click="onLogout">
                         <v-list-tile-action>
                             <v-icon>exit_to_app</v-icon>
@@ -41,6 +42,14 @@
             <v-toolbar-title>
                 <router-link to="/" tag="span" style="cursor: pointer">Task Manager</router-link>
             </v-toolbar-title>
+                    <v-menu open-on-hover bottom  offset-y v-if="isUserSignIn">
+                        <template v-slot:activator="{ on }">
+                            <v-btn flat v-on="on" @click="goToDashboard">
+                                {{dashboard ? dashboard.name : 'Your Dashboards'}}
+                            </v-btn>
+                        </template>
+                        <dashboards-list></dashboards-list>
+                    </v-menu>
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-xs-only">
                 <template v-if="isUserSignIn">
@@ -72,6 +81,7 @@
 
 <script>
     import {mapGetters} from "vuex";
+    import {goToDashboard} from "../router";
 
     export default {
         data() {
@@ -84,11 +94,17 @@
             }
         },
         computed: {
-            ...mapGetters(['user', 'isUserSignIn'])
+            ...mapGetters(['user', 'isUserSignIn', 'dashboard'])
         },
         methods: {
             onLogout() {
                 this.$store.dispatch("logout")
+            },
+            goToDashboard() {
+                const dashboard = this.dashboard;
+                if (dashboard) {
+                    goToDashboard(dashboard.dashboardId, dashboard.name)
+                }
             }
         }
     }

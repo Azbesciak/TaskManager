@@ -7,6 +7,10 @@ Vue.use(Router);
 export const AUTH_PAGE = '/signin';
 export const HOME_PAGE = '/dashboard';
 
+export function goToDashboard(id, name) {
+    router.push(`${HOME_PAGE}/${id}/${name}`)
+}
+
 export const router = new Router({
     mode: 'history',
     base: process.env.BASE_URL,

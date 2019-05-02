@@ -17,14 +17,25 @@ export const dashboardStore = {
     getters: {
         dashboard: state => state.dashboard
     },
+    mutations: {
+        setDashboard(state, payload: DashboardData) {
+            state.dashboard = payload;
+        }
+    },
     actions: {
-        cancelDashboardChanges({commit}, {dashboardId}: DashBoardData) {
-            dashboards().child(dashboardId).off();
+        clearDashboard({getters}) {
+            const dashboard = getters.dashboard;
+            if (dashboard) {
+                dashboards().child(dashboard.dashboardId).off();
+            }
         },
-        // https://stackoverflow.com/questions/21500946/firebase-how-to-list-user-specific-data
-        listenOnDashBoardChanges({commit}, {dashboardId}: DashBoardData) {
-            const dashBoard = dashboards().child(dashboardId);
-            dashBoard.on('value', (a, b) => console.log('a b', a, b));
+        selectDashboard({commit, dispatch}, dashboardId: string) {
+            dispatch('clearDashboard').then(() => {
+                const dashBoard = dashboards().child(dashboardId);
+                dashBoard.on('value', newData => {
+                    commit('setDashboard', newData ? {dashboardId, ...newData.val()} : null);
+                });
+            });
         },
         createDashboard({commit, dispatch, getters}, {name}: DashboardCreateRequest) {
             commit('setLoading', true);
@@ -48,8 +59,9 @@ export const dashboardStore = {
     },
 };
 
-export interface DashBoardData {
-    owner?: string;
+export interface DashboardData {
+    dashboardId: string;
+    owner: string;
     name: string;
     users: { [key: string]: string }
 }

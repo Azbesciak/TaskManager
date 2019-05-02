@@ -23,7 +23,7 @@ export const sharedStore = {
         }
     },
     getters: {
-        loading: (state) =>  state.loading,
+        loading: state =>  state.loading,
         error: state => state.error,
     }
 };
