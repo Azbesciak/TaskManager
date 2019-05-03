@@ -124,6 +124,7 @@ export interface DashboardGroup {
     name: string;
     enabled: boolean;
     color: string;
+    tasks?: { [id: string]: DashboardTask }
 }
 
 function createDashboardGroup(name: string): DashboardGroup {
@@ -134,8 +135,8 @@ export interface DashboardData {
     dashboardId: string;
     owner: string;
     name: string;
-    users: { [key: string]: string };
-    groups: { [id: string]: DashboardGroup }
+    users?: { [key: string]: string };
+    groups?: { [id: string]: DashboardGroup }
 }
 
 export interface DashboardCreateRequest {

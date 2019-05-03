@@ -5,7 +5,10 @@
                 <v-text-field
                         name="name" :label="title" id="name"
                         v-model="name" autocomplete="off"
+                        :single-line="isSingle"
+                        :hide-details="isHideDetails"
                         type="text" required :rules="nameRules">
+
                 </v-text-field>
             </v-flex>
             <v-btn flat icon small class="text-xs-center align-center" type="submit" :disabled="loading || !valid"
@@ -21,7 +24,7 @@
 
 <script>
     export default {
-        props: ['value', 'rules', 'loading', 'title'],
+        props: ['value', 'rules', 'loading', 'title', 'isSingle', 'isFullWidth', 'isHideDetails'],
         watch: {
             value(val) {
                 this.reset(val)
@@ -46,3 +49,9 @@
         }
     }
 </script>
+<style scoped>
+    .v-input--hide-details {
+        padding: 0;
+        margin: 0;
+    }
+</style>

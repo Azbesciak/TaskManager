@@ -6,7 +6,9 @@
             </template>
             <template v-else>
                 <v-flex>
-                    <div class="title font-weight-light" @click.stop="startEdit">{{group.name}}</div>
+                    <div class="title font-weight-light" @click.stop="startEdit">
+                        {{group.name}}
+                    </div>
                 </v-flex>
                 <v-btn icon flat small @click.stop="startEdit">
                     <v-icon>edit</v-icon>
@@ -17,8 +19,7 @@
             </template>
         </v-card-title>
         <v-card-actions>
-            <v-list-tile class="grow">
-            </v-list-tile>
+            <tasks-view :group="group" :group-id="groupId"></tasks-view>
         </v-card-actions>
     </v-card>
 </template>
