@@ -80,6 +80,13 @@ export const dashboardStore = {
             }
             return wrapPromiseExecution(commit, () => dashboardGroup(dashboardId, groupId).update({name, color}));
         },
+        removeDashboardGroup({commit, getters}, groupId: string) {
+            const dashboardId = dashboardIdIfDefined(getters);
+            if (!dashboardId || !groupId) {
+                return;
+            }
+            return wrapPromiseExecution(commit, () => dashboardGroup(dashboardId, groupId).remove());
+        },
         createDashboard({commit, dispatch, getters}, {name}: DashboardCreateRequest) {
             return wrapPromiseExecution(commit, () => {
                 const owner = getters.user.id;

@@ -11,6 +11,9 @@
                 <v-btn icon flat small @click.stop="startEdit">
                     <v-icon>edit</v-icon>
                 </v-btn>
+                <v-btn icon flat small @click.stop="removeGroup">
+                    <v-icon>clear</v-icon>
+                </v-btn>
             </template>
         </v-card-title>
         <v-card-actions>
