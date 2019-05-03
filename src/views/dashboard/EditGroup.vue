@@ -25,7 +25,7 @@
 
     export default {
         name: "EditGroup",
-        props: ['group'],
+        props: ['group', 'group-id'],
         data() {
             return {
                 valid: false,
@@ -42,7 +42,7 @@
             saveChanges() {
                 if (this.group.name !== this.name)
                     this.$store.dispatch('updateDashboardGroup', {
-                        groupId: this.group.groupId,
+                        groupId: this.groupId,
                         name: this.name,
                         color: this.color
                     })

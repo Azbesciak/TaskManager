@@ -2,7 +2,7 @@
     <v-card class="mx-auto" :color="group && group.color" max-width="400">
         <v-card-title>
             <template v-if="edit">
-                <edit-group :group="newGroup" @finished="onEditFinish"></edit-group>
+                <edit-group :group="group" :group-id="groupId" @finished="onEditFinish"></edit-group>
             </template>
             <template v-else>
                 <v-flex>
