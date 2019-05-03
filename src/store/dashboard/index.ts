@@ -1,6 +1,7 @@
 import * as firebase from 'firebase';
 import {randomColor} from '@/plugins/vuetify';
 import {HOME_PAGE, router} from '@/router';
+import {DashboardTask} from '@/store/dashboard-tasks';
 
 let store: firebase.database.Reference = null;
 
@@ -11,10 +12,14 @@ function dashboards() {
     return store;
 }
 
-function dashboardGroup(dashboardId: string, groupId: string) {
-    return dashboards().child(`${dashboardId}/groups/${groupId}`)
+export function dashboardGroup(dashboardId: string, groupId: string) {
+    return dashboards().child(`${dashboardId}/groups/${groupId}`);
 }
 
+export function dashboardIdIfDefined(getters) {
+    const dash = getters.dashboard;
+    return dash && dash.dashboardId;
+}
 
 export const dashboardStore = {
     state: {
@@ -45,74 +50,67 @@ export const dashboardStore = {
         },
         removeDashboard({commit, getters, dispatch}, dashboardId: string) {
             const dashboard = getters.dashboard;
-            commit('setLoading', true);
-            if (dashboard && dashboard.dashboardId === dashboardId) {
-                router.push(HOME_PAGE);
-                dispatch('clearDashboard');
-            }
-            return Promise.all([
-                dashboards().child(dashboardId).remove(),
-                dispatch('removeUserDashboard', dashboardId)
-            ]).then(() => {
-                commit('setLoading', false);
-            }).catch(e => {
-                commit('setError', e);
-                commit('setLoading', false);
+            return wrapPromiseExecution(commit, () => {
+                if (dashboard && dashboard.dashboardId === dashboardId) {
+                    router.push(HOME_PAGE);
+                    dispatch('clearDashboard');
+                }
+                return Promise.all([
+                    dashboards().child(dashboardId).remove(),
+                    dispatch('removeUserDashboard', dashboardId)
+                ]);
             });
         },
         addDashboardGroup({dispatch, getters}, name: string) {
-            const dashboard = getters.dashboard;
-            if (!dashboard) {
+            const dashboardId = dashboardIdIfDefined(getters);
+            if (!dashboardId) {
                 return;
             }
             const value = createDashboardGroup(name);
             return dashboards()
-                .child(dashboard.dashboardId)
+                .child(dashboardId)
                 .child('groups')
                 .push(value)
                 .then(v => ({groupId: v.key, ...value}));
         },
         updateDashboardGroup({commit, getters}, {groupId, name, color}: DashboardGroup) {
-            const dashboard = getters.dashboard;
-            console.log("REQUEST", groupId, dashboard)
-            if (!dashboard || !groupId) {
+            const dashboardId = dashboardIdIfDefined(getters);
+            if (!dashboardId || !groupId) {
                 return;
             }
-            commit('setLoading', true);
-            dashboardGroup(dashboard.dashboardId, groupId).update({name, color})
-                .then(v => {
-                    console.log("EEEE", v)
-                    commit('setLoading', false);
-                }).catch(e => {
-                commit('setError', e);
-                commit('setLoading', false);
-            });
-        }
-        ,
+            return wrapPromiseExecution(commit, () => dashboardGroup(dashboardId, groupId).update({name, color}));
+        },
         createDashboard({commit, dispatch, getters}, {name}: DashboardCreateRequest) {
-            commit('setLoading', true);
-            const owner = getters.user.id;
-            return dispatch('addDashboard', {name})
-                .then(v =>
-                    dashboards().child(v.key)
-                        .set({owner, name})
-                        .then(() => v)
-                )
-                .then(v => {
-                    commit('setLoading', false);
-                }).catch(e => {
-                    commit('setError', e);
-                    commit('setLoading', false);
-                });
+            return wrapPromiseExecution(commit, () => {
+                const owner = getters.user.id;
+                return dispatch('addDashboard', {name})
+                    .then(v =>
+                        dashboards().child(v.key)
+                            .set({owner, name})
+                            .then(() => v)
+                    );
+            });
         },
         addDashboard({commit, getters}: any, {name}: DashboardCreateRequest) {
             return getters.currentUserStore.child('dashboards').push({name});
         },
         removeUserDashboard({commit, getters}: any, dashboardId: string) {
             return getters.currentUserStore.child('dashboards').child(dashboardId).remove();
-        },
-    },
+        }
+    }
 };
+
+export function wrapPromiseExecution<T>(commit, f: () => Promise<T>) {
+    commit('setLoading', true);
+    return f()
+        .then(v => {
+            commit('setLoading', false);
+            return v;
+        }).catch(e => {
+            commit('setError', e);
+            commit('setLoading', false);
+        });
+}
 
 export interface DashboardGroup {
     groupId?: string;
