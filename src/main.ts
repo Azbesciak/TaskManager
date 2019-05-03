@@ -7,9 +7,11 @@ import './registerServiceWorker';
 import firebase from 'firebase';
 import ErrorAlert from './components/ErrorAlert.vue';
 import DashboardList from './components/DashboardsList.vue';
+import CreateDashboard from '@/views/dashboard/CreateDashboard.vue';
 
 Vue.component('error-alert', ErrorAlert);
 Vue.component('dashboards-list', DashboardList);
+Vue.component('create-dashboard', CreateDashboard);
 Vue.config.productionTip = false;
 
 const config = {

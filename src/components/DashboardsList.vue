@@ -10,14 +10,20 @@
             <v-list-tile-content>
                 <v-list-tile-title v-html="value.name"></v-list-tile-title>
             </v-list-tile-content>
+            <v-btn icon flat small v-if="canRemove" @click.stop="removeDashboard(key)">
+                <v-icon>clear</v-icon>
+            </v-btn>
         </v-list-tile>
     </v-list>
 </template>
 <script>
     import {mapGetters} from "vuex";
-    import {goToDashboard, HOME_PAGE} from "../router";
+    import {goToDashboard} from "../router";
 
     export default {
+        props: {
+          canRemove: false
+        },
         data: () => ({
             createDashboardEnabled: false
         }),
@@ -27,6 +33,9 @@
         methods: {
             goToDashboard(id, name) {
                 goToDashboard(id, name)
+            },
+            removeDashboard(id) {
+                this.$store.dispatch("removeDashboard", id)
             }
         }
     }
