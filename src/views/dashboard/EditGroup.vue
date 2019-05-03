@@ -7,13 +7,13 @@
                         label="Name" v-model="name" single-line full-width
                         hide-details :rules="nameRules" class="text-xs-center"></v-text-field>
             </v-flex>
-            <v-btn icon flat type="submit" :loading="loading" :disabled="loading || !valid">
+            <v-btn icon flat small type="submit" :loading="loading" :disabled="loading || !valid">
                 <v-icon>save</v-icon>
                 <span slot="loader" class="custom-loader">
                                 <v-icon light>cached</v-icon>
                             </span>
             </v-btn>
-            <v-btn icon flat @click.stop="finish">
+            <v-btn icon flat small @click.stop="finish">
                 <v-icon>undo</v-icon>
             </v-btn>
         </v-layout>
@@ -57,6 +57,3 @@
     }
 </script>
 
-<style scoped>
-
-</style>

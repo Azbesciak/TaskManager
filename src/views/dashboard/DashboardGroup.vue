@@ -8,7 +8,7 @@
                 <v-flex>
                     <div class="title font-weight-light" @click.stop="startEdit">{{group.name}}</div>
                 </v-flex>
-                <v-btn icon flat @click.stop="startEdit">
+                <v-btn icon flat small @click.stop="startEdit">
                     <v-icon>edit</v-icon>
                 </v-btn>
             </template>
@@ -21,31 +21,36 @@
 </template>
 <script>
     import EditGroup from "./EditGroup";
+    import TasksView from "./TasksView";
 
     export default {
-        components: {EditGroup},
+        components: {TasksView, EditGroup},
         props: {
             group: null,
             groupId: ''
         },
         data() {
             return {
-                edit: !this.group,
-                newGroup: null
+                edit: !this.group
             }
         },
         methods: {
             startEdit() {
-                this.newGroup = Object.assign({groupId: this.groupId}, this.group);
                 this.edit = true;
             },
             onEditFinish() {
                 this.edit = false;
+            },
+            removeGroup() {
+                this.$store.dispatch("removeDashboardGroup", this.groupId)
             }
         }
     }
 </script>
 <style lang="scss">
+    .v-card__title {
+        padding: 2px;
+    }
     .full-width {
         width: 100%;
         background: rgba(245, 245, 245, 0.21);
