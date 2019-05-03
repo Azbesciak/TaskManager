@@ -13,29 +13,33 @@
                 <v-btn icon flat small @click.stop="startEdit">
                     <v-icon>edit</v-icon>
                 </v-btn>
-                <v-btn icon flat small @click.stop="removeGroup">
-                    <v-icon>clear</v-icon>
-                </v-btn>
+                <task-group-settings :settings="groupSettings" @saved="onSettingsUpdated"></task-group-settings>
             </template>
         </v-card-title>
         <v-card-actions>
-            <tasks-view :group="group" :group-id="groupId"></tasks-view>
+            <tasks-view :group="group" :group-id="groupId" :show-completed="groupSettings.completed"></tasks-view>
         </v-card-actions>
     </v-card>
 </template>
 <script>
     import EditGroup from "./EditGroup";
     import TasksView from "./TasksView";
+    import TaskGroupSettings from "./TaskGroupSettings";
 
     export default {
-        components: {TasksView, EditGroup},
+        components: {TaskGroupSettings, TasksView, EditGroup},
         props: {
             group: null,
             groupId: ''
         },
         data() {
             return {
-                edit: !this.group
+                edit: !this.group,
+                groupSettings: {
+                    completed: false,
+                    dark: false,
+                    groupId: this.groupId
+                },
             }
         },
         methods: {
@@ -45,8 +49,8 @@
             onEditFinish() {
                 this.edit = false;
             },
-            removeGroup() {
-                this.$store.dispatch("removeDashboardGroup", this.groupId)
+            onSettingsUpdated(newSettings) {
+                console.log("NES", newSettings, this.groupSettings)
             }
         }
     }

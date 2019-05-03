@@ -8,9 +8,9 @@
         </v-flex>
         <v-flex xs12 pa-0>
             <v-expansion-panel popout pt-5 class="task-panel">
-                <v-expansion-panel-content
-                        v-for="[taskId, task] in visibleTasks"
-                        :key="taskId"
+                <v-expansion-panel-content v-bind:class="{'completed-task': task.completed}"
+                                           v-for="[taskId, task] in visibleTasks"
+                                           :key="taskId"
                 >
                     <template v-slot:header>
                         <v-layout row wrap>
@@ -55,7 +55,7 @@
         props: ['group', 'group-id', 'showCompleted'],
         data() {
             return {
-                taskNameRules: [v => !!v || "Task name required"]
+                taskNameRules: [v => !!v || "Task name required"],
             }
         },
         computed: {
@@ -85,23 +85,33 @@
 </script>
 
 <style lang="scss">
-    .task-panel .v-expansion-panel__header{
-        padding: 12px;
+    .task-panel {
+        .v-expansion-panel__header {
+            padding: 12px;
+        }
+        .completed-task .v-expansion-panel__header {
+            color: rgba(59, 94, 40, 0.9);
+            font-weight: 500;
+        }
     }
+
     .header-text {
         text-overflow: ellipsis;
         overflow: hidden;
         word-break: break-word;
         max-width: 270px;
     }
+
     .header-activate {
         align-self: center;
         margin-right: 4px;
     }
+
     .v-expansion-panel__container--active {
         .header-text {
             max-width: initial;
         }
+
         .header-activate {
             display: none;
         }
