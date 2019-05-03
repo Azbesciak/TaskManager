@@ -5,7 +5,7 @@
             <v-flex>
                 <v-text-field
                         label="Name" v-model="name" single-line full-width
-                        hide-details :rules="nameRules" class="text-xs-center"></v-text-field>
+                        hide-details :rules="nameRules" class="text-xs-center edit-input"></v-text-field>
             </v-flex>
             <v-btn icon flat small type="submit" :loading="loading" :disabled="loading || !valid">
                 <v-icon>save</v-icon>
@@ -56,4 +56,17 @@
         }
     }
 </script>
+<style lang="scss">
+    .edit-input {
+        .v-input__slot {
+            min-height: 40px !important;
+        }
+
+        input {
+            max-height: 40px;
+            margin-top: 0 !important;
+        }
+
+    }
+</style>
 

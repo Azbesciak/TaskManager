@@ -2,29 +2,41 @@
     <v-flex row wrap xs12>
         <v-flex>
             <create-dashboard ref="createTask" :value="''" :loading="loading" :rules="taskNameRules"
-                              :title="'New Task...'" @create="createNewTask" :is-single="true" :is-hide-details="true" :is-full-width="true"
+                              :title="'New Task...'" @create="createNewTask" :is-single="true" :is-hide-details="true"
+                              :is-full-width="true"
             ></create-dashboard>
         </v-flex>
         <v-flex xs12 pa-0>
-            <v-expansion-panel popout pt-5>
+            <v-expansion-panel popout pt-5 class="task-panel">
                 <v-expansion-panel-content
                         v-for="[taskId, task] in visibleTasks"
                         :key="taskId"
                 >
                     <template v-slot:header>
-                        <div>{{task.taskName}}</div>
+                        <v-layout row wrap>
+                            <v-flex>
+                                <div class="header-text">{{task.taskName}}</div>
+                            </v-flex>
+                            <v-spacer></v-spacer>
+                            <v-btn icon flat small
+                                   class="header-activate"
+                                   @click.stop="completeTask(taskId)"
+                                   :disabled="task.completed">
+                                <v-icon>done</v-icon>
+                            </v-btn>
+                        </v-layout>
                     </template>
                     <v-card>
                         <v-card-text v-if="task.description">{{task.description}}</v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn icon flat @click.stop="completeTask(taskId)" :disabled="task.completed">
+                            <v-btn icon small flat @click.stop="completeTask(taskId)" :disabled="task.completed">
                                 <v-icon>done</v-icon>
                             </v-btn>
-                            <v-btn icon flat>
+                            <v-btn icon flat small>
                                 <v-icon>edit</v-icon>
                             </v-btn>
-                            <v-btn icon flat @click.stop="removeTask(taskId)">
+                            <v-btn icon flat small @click.stop="removeTask(taskId)">
                                 <v-icon>clear</v-icon>
                             </v-btn>
                         </v-card-actions>
@@ -72,6 +84,26 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+    .task-panel .v-expansion-panel__header{
+        padding: 12px;
+    }
+    .header-text {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-word;
+        max-width: 270px;
+    }
+    .header-activate {
+        align-self: center;
+        margin-right: 4px;
+    }
+    .v-expansion-panel__container--active {
+        .header-text {
+            max-width: initial;
+        }
+        .header-activate {
+            display: none;
+        }
+    }
 </style>
