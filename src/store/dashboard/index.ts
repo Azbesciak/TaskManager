@@ -1,5 +1,4 @@
 import * as firebase from 'firebase';
-import {randomColor} from '@/plugins/vuetify';
 import {HOME_PAGE, router} from '@/router';
 import {DashboardTask} from '@/store/dashboard-tasks';
 
@@ -132,7 +131,7 @@ export interface DashboardGroupSettings {
 }
 
 function createDashboardGroup(name: string): DashboardGroup {
-    return {name, settings: {}};
+    return {name, settings: {color: ''}};
 }
 
 export interface DashboardData {

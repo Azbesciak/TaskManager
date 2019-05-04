@@ -25,6 +25,19 @@
                         </v-list-tile-action>
                         <v-list-tile-title>Dark Mode</v-list-tile-title>
                     </v-list-tile>
+                    <v-list-tile>
+                        <strong>Group color:</strong>
+                    </v-list-tile>
+                    <swatches
+                            v-model="settings.color"
+                            :colors="materialColors"
+                            row-length="4"
+                            show-border
+                            inline
+                            swatch-size="24"
+                            :swatch-style="{paddingLeft: '0px', marginBottom: '3px', marginRight: '3px' }"
+                            :wrapper-style="{padding: '0 16px', maxWidth: '270px' }"
+                    ></swatches>
                 </v-list>
                 <v-card-actions>
                     <v-spacer></v-spacer>
@@ -38,8 +51,14 @@
 </template>
 
 <script>
+    import Swatches from 'vue-swatches'
+    import {materialColors} from "../../plugins/vuetify";
+
     export default {
         name: "TaskGroupSettings",
+        components: {
+            Swatches
+        },
         props: {
             settings: {},
             groupId: null
@@ -47,7 +66,8 @@
         data() {
             return {
                 visible: false,
-                original: null
+                original: null,
+                materialColors
             }
         },
         watch: {
@@ -89,6 +109,18 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+    .vue-swatches__wrapper {
+        padding-top: 0 !important;
+    }
+    .vue-swatches__container {
+        padding: 0 !important;
+    }
+    /*.vue-swatches__check__circle {*/
+    /*    svg {*/
+    /*        position: absolute;*/
+    /*        margin-top: 6px;*/
+    /*        margin-left: 6px;*/
+    /*    }*/
+    /*}*/
 </style>
