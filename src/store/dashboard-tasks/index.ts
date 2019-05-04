@@ -15,11 +15,11 @@ export const tasksStore = {
                     .remove()
             );
         },
-        completeTask({commit, getters}, {groupId, taskId}) {
+        completeTask({commit, getters}, {groupId, taskId, completed = true}) {
             return executeIfDashboardDefined(commit, getters, dashboardId =>
                 dashboardGroup(dashboardId, groupId)
                     .child(`tasks/${taskId}/completed`)
-                    .set(true)
+                    .set(completed)
             );
         }
     }

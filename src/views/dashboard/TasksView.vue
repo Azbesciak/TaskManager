@@ -20,7 +20,7 @@
                             <v-spacer></v-spacer>
                             <v-btn icon flat small
                                    class="header-activate"
-                                   @click.stop="completeTask(taskId)"
+                                   @click.stop="completeTask(taskId, true)"
                                    :disabled="task.completed">
                                 <v-icon>done</v-icon>
                             </v-btn>
@@ -30,14 +30,15 @@
                         <v-card-text v-if="task.description">{{task.description}}</v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn icon small flat @click.stop="completeTask(taskId)" :disabled="task.completed">
-                                <v-icon>done</v-icon>
+                            <v-btn icon small flat @click.stop="completeTask(taskId, !task.completed)">
+                                <v-icon v-if="task.completed">clear</v-icon>
+                                <v-icon v-else>done</v-icon>
                             </v-btn>
                             <v-btn icon flat small>
                                 <v-icon>edit</v-icon>
                             </v-btn>
                             <v-btn icon flat small @click.stop="removeTask(taskId)">
-                                <v-icon>clear</v-icon>
+                                <v-icon>delete</v-icon>
                             </v-btn>
                         </v-card-actions>
                     </v-card>
@@ -73,8 +74,8 @@
             removeTask(taskId) {
                 this.dispatch('removeTask', {taskId});
             },
-            completeTask(taskId) {
-                this.dispatch('completeTask', {taskId});
+            completeTask(taskId, completed) {
+                this.dispatch('completeTask', {taskId, completed});
             },
             dispatch(funcName, payload) {
                 return this.$store
