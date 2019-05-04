@@ -19,6 +19,12 @@
                         </v-list-tile-action>
                         <v-list-tile-title>Show completed tasks</v-list-tile-title>
                     </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-action>
+                            <v-switch v-model="settings.darkMode" color="purple"></v-switch>
+                        </v-list-tile-action>
+                        <v-list-tile-title>Dark Mode</v-list-tile-title>
+                    </v-list-tile>
                 </v-list>
 
                 <v-card-actions>

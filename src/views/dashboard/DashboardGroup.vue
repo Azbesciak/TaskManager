@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mx-auto" :color="group && group.color" max-width="400">
+    <v-card class="mx-auto" :color="group && group.color" max-width="400" :dark="groupSettings.darkMode">
         <v-card-title>
             <template v-if="edit">
                 <edit-group :group="group" :group-id="groupId" @finished="onEditFinish"></edit-group>
@@ -37,7 +37,7 @@
                 edit: !this.group,
                 groupSettings: {
                     completed: false,
-                    dark: false,
+                    darkMode: false,
                     groupId: this.groupId
                 },
             }

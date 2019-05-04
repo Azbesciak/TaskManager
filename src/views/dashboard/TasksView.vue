@@ -94,6 +94,9 @@
             color: rgba(59, 94, 40, 0.9);
             font-weight: 500;
         }
+        &.theme--dark .completed-task .v-expansion-panel__header{
+            color: rgba(124, 196, 79, 0.9);
+        }
     }
 
     .header-text {
