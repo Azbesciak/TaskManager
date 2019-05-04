@@ -1,18 +1,15 @@
 <template>
     <v-container grid-list-md text-xs-center>
-        <create-dashboard ref="createDashboard" :value="''" :loading="loading" :rules="nameRules"
-                          :title="'New dashboard group'" @create="addDashboardGroup"
-        ></create-dashboard>
-        <v-layout wrap>
-            <v-flex v-for="(group, id) in dashboard && dashboard.groups">
-                <dashboard-group :group="group" :group-id="id"></dashboard-group>
-            </v-flex>
+        <v-layout>
+            <dashboard-users :dashboard-id="id"></dashboard-users>
+            <dashboard-view :dashboard-id="id" :dashboard-name="name"></dashboard-view>
         </v-layout>
     </v-container>
 </template>
 <script>
     import {mapGetters} from "vuex";
-    import DashboardGroup from "./DashboardGroup";
+    import DashboardUsers from "../dashboard-users/DashboardUsers";
+    import DashboardView from "./DashboardView";
 
     export default {
         created() {
@@ -26,26 +23,11 @@
         },
         data() {
             const {id, name} = this.$route.params;
-            return {
-                id, name,
-                isAddEnabled: false,
-                nameRules: [v => {
-                    if (!this.dashboard) return true;
-                    return !Object.keys(this.dashboard).some(({name}) => name === v) || 'Name exists';
-                }]
-            };
+            return {id, name};
         },
-        components: {
-            'dashboard-group': DashboardGroup
-        },
+        components: {DashboardView, DashboardUsers},
         computed: mapGetters(['dashboard', 'loading']),
         methods: {
-            addDashboardGroup(name) {
-                if (!name) return;
-                this.$store
-                    .dispatch('addDashboardGroup', name)
-                    .then(() => this.$refs.createDashboard.reset());
-            },
             selectDashboard() {
                 return this.$store.dispatch("selectDashboard", this.id);
             }

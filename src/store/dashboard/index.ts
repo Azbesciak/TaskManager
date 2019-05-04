@@ -4,14 +4,28 @@ import {DashboardTask} from '@/store/dashboard-tasks';
 
 let store: firebase.database.Reference = null;
 
+export const DASHBOARDS_STORE = `dashboards`;
+
 function dashboards() {
     if (!store) {
-        store = firebase.database().ref(`/dashboards`);
+        store = firebase.database().ref(DASHBOARDS_STORE);
     }
     return store;
 }
 
+export function dashboard(dashboardId: string) {
+    return `${DASHBOARDS_STORE}/${dashboardId}`;
+}
+
+export function dashboardUserInvitation(dashboardId: string, userId: string) {
+    return `${dashboard(dashboardId)}/invitations/${userId}`
+}
+
 export function dashboardGroup(dashboardId: string, groupId: string) {
+    return `${dashboard(dashboardId)}/groups/${groupId}`
+}
+
+export function dashboardGroupReference(dashboardId: string, groupId: string) {
     return dashboards().child(`${dashboardId}/groups/${groupId}`);
 }
 
@@ -77,14 +91,14 @@ export const dashboardStore = {
             if (!dashboardId || !groupId) {
                 return;
             }
-            return wrapPromiseExecution(commit, () => dashboardGroup(dashboardId, groupId).update(data));
+            return wrapPromiseExecution(commit, () => dashboardGroupReference(dashboardId, groupId).update(data));
         },
         removeDashboardGroup({commit, getters}, groupId: string) {
             const dashboardId = dashboardIdIfDefined(getters);
             if (!dashboardId || !groupId) {
                 return;
             }
-            return wrapPromiseExecution(commit, () => dashboardGroup(dashboardId, groupId).remove());
+            return wrapPromiseExecution(commit, () => dashboardGroupReference(dashboardId, groupId).remove());
         },
         createDashboard({commit, dispatch, getters}, {name}: DashboardCreateRequest) {
             return wrapPromiseExecution(commit, () => {
@@ -139,6 +153,7 @@ export interface DashboardData {
     owner: string;
     name: string;
     users?: { [key: string]: string };
+    invitations?: {[key: string]: boolean}
     groups?: { [id: string]: DashboardGroup }
 }
 

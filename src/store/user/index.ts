@@ -4,11 +4,21 @@ import {UserInfo} from 'firebase';
 
 let store: firebase.database.Reference = null;
 
+export const USERS_STORE = 'users';
+
 export function usersStore() {
     if (!store) {
-        store = firebase.database().ref('users');
+        store = firebase.database().ref(USERS_STORE);
     }
     return store;
+}
+
+export function userReference(userId: string) {
+    return usersStore().child(userId);
+}
+
+export function userDashboardInvitation(userId: string, dashboardId: string) {
+    return `${USERS_STORE}/${userId}/invitations/${dashboardId}`
 }
 
 export const userStore = {
@@ -73,7 +83,7 @@ function listenUserUpdates({commit, getters}: any, user: User) {
 }
 
 function cancelUserUpdates(userId: string) {
-    usersStore().child(userId).off('value');
+    userReference(userId).off('value');
 }
 
 type FireBaseUser = firebase.auth.UserCredential;
@@ -119,7 +129,8 @@ export interface User {
     name: string;
     email: string;
     photoUrl?: string;
-    dashboards: string[]
+    dashboards: string[],
+    invitations?: string[]
 }
 
 export interface OAuthProvider {

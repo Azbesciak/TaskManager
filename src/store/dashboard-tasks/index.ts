@@ -1,23 +1,23 @@
-import {dashboardGroup, dashboardIdIfDefined, wrapPromiseExecution} from '@/store/dashboard';
+import {dashboardGroupReference, dashboardIdIfDefined, wrapPromiseExecution} from '@/store/dashboard';
 
 export const tasksStore = {
     actions: {
         addTask({commit, getters}, {groupId, ...task}) {
             return executeIfDashboardDefined(commit, getters, dashboardId =>
-                dashboardGroup(dashboardId, groupId)
+                dashboardGroupReference(dashboardId, groupId)
                     .child('tasks')
                     .push(task));
         },
         removeTask({commit, getters}, {groupId, taskId}) {
             return executeIfDashboardDefined(commit, getters, dashboardId =>
-                dashboardGroup(dashboardId, groupId)
+                dashboardGroupReference(dashboardId, groupId)
                     .child(`tasks/${taskId}`)
                     .remove()
             );
         },
         completeTask({commit, getters}, {groupId, taskId, completed = true}) {
             return executeIfDashboardDefined(commit, getters, dashboardId =>
-                dashboardGroup(dashboardId, groupId)
+                dashboardGroupReference(dashboardId, groupId)
                     .child(`tasks/${taskId}/completed`)
                     .set(completed)
             );
@@ -25,7 +25,7 @@ export const tasksStore = {
     }
 };
 
-function executeIfDashboardDefined<T>(commit, getters, f: (dashboardId: string) => Promise<T>) {
+export function executeIfDashboardDefined<T>(commit, getters, f: (dashboardId: string) => Promise<T>) {
     const dashboardId = dashboardIdIfDefined(getters);
     if (!dashboardId) {
         return;
