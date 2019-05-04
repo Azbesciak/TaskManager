@@ -73,12 +73,12 @@ export const dashboardStore = {
                 .push(value)
                 .then(v => ({groupId: v.key, ...value}));
         },
-        updateDashboardGroup({commit, getters}, {groupId, name, color}: DashboardGroup) {
+        updateDashboardGroup({commit, getters}, {groupId, ...data}: DashboardGroup) {
             const dashboardId = dashboardIdIfDefined(getters);
             if (!dashboardId || !groupId) {
                 return;
             }
-            return wrapPromiseExecution(commit, () => dashboardGroup(dashboardId, groupId).update({name, color}));
+            return wrapPromiseExecution(commit, () => dashboardGroup(dashboardId, groupId).update(data));
         },
         removeDashboardGroup({commit, getters}, groupId: string) {
             const dashboardId = dashboardIdIfDefined(getters);
@@ -122,13 +122,17 @@ export function wrapPromiseExecution<T>(commit, f: () => Promise<T>) {
 export interface DashboardGroup {
     groupId?: string;
     name: string;
-    enabled: boolean;
-    color: string;
+    settings?: DashboardGroupSettings;
     tasks?: { [id: string]: DashboardTask }
+}
+export interface DashboardGroupSettings {
+    color?: string;
+    dark?: boolean;
+    showCompleted?: boolean;
 }
 
 function createDashboardGroup(name: string): DashboardGroup {
-    return {name, enabled: true, color: randomColor()};
+    return {name, settings: {}};
 }
 
 export interface DashboardData {

@@ -1,16 +1,18 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-flex row wrap xs12>
         <v-flex>
-            <create-dashboard ref="createTask" :value="''" :loading="loading" :rules="taskNameRules"
-                              :title="'New Task...'" @create="createNewTask" :is-single="true" :is-hide-details="true"
-                              :is-full-width="true"
+            <create-dashboard
+                    ref="createTask" :value="''" :loading="loading" :rules="taskNameRules"
+                    :title="'New Task...'" @create="createNewTask" :is-single="true" :is-hide-details="true"
+                    :is-full-width="true"
             ></create-dashboard>
         </v-flex>
         <v-flex xs12 pa-0>
             <v-expansion-panel popout pt-5 class="task-panel">
-                <v-expansion-panel-content v-bind:class="{'completed-task': task.completed}"
-                                           v-for="[taskId, task] in visibleTasks"
-                                           :key="taskId"
+                <v-expansion-panel-content
+                        v-bind:class="{'completed-task': task.completed}"
+                        v-for="[taskId, task] in visibleTasks"
+                        :key="taskId"
                 >
                     <template v-slot:header>
                         <v-layout row wrap>
@@ -90,11 +92,13 @@
         .v-expansion-panel__header {
             padding: 12px;
         }
+
         .completed-task .v-expansion-panel__header {
             color: rgba(59, 94, 40, 0.9);
             font-weight: 500;
         }
-        &.theme--dark .completed-task .v-expansion-panel__header{
+
+        &.theme--dark .completed-task .v-expansion-panel__header {
             color: rgba(124, 196, 79, 0.9);
         }
     }

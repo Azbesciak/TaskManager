@@ -11,7 +11,7 @@
                     <v-icon>more_vert</v-icon>
                 </v-btn>
             </template>
-            <v-card>
+            <v-card v-if="settings">
                 <v-list>
                     <v-list-tile>
                         <v-list-tile-action>
@@ -21,12 +21,11 @@
                     </v-list-tile>
                     <v-list-tile>
                         <v-list-tile-action>
-                            <v-switch v-model="settings.darkMode" color="purple"></v-switch>
+                            <v-switch v-model="settings.dark" color="purple"></v-switch>
                         </v-list-tile-action>
                         <v-list-tile-title>Dark Mode</v-list-tile-title>
                     </v-list-tile>
                 </v-list>
-
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="red" flat @click.stop="removeGroup">Remove</v-btn>
@@ -42,21 +41,49 @@
     export default {
         name: "TaskGroupSettings",
         props: {
-            settings: {}
+            settings: {},
+            groupId: null
         },
         data() {
             return {
-                visible: false
+                visible: false,
+                original: null
+            }
+        },
+        watch: {
+            visible(value) {
+                if (value)
+                    this.$emit("edit-start");
+                else
+                    this.$emit("edit-end");
+            },
+            settings(newValue, old) {
+                if (!old && newValue) {
+                    this.original = Object.assign({}, newValue)
+                } else if (!newValue && old) {
+                    this.original = null
+                }
             }
         },
         methods: {
             removeGroup() {
-                this.visible = false;
-                this.$store.dispatch("removeDashboardGroup", this.settings.groupId)
+                this.finish();
+                this.$store.dispatch("removeDashboardGroup", this.groupId)
             },
             saveSettings() {
+                const changed = Object.entries(this.settings)
+                    .some(([k, v]) => typeof v == 'boolean' ? v === !this.original[k] : v !== this.original[k]);
+                if (changed)
+                    this.$store.dispatch('updateDashboardGroup', {
+                        groupId: this.groupId,
+                        settings: this.settings
+                    }).then(() => this.finish());
+                else
+                    this.finish()
+
+            },
+            finish() {
                 this.visible = false;
-                this.$emit('saved', this.settings)
             }
         }
     }

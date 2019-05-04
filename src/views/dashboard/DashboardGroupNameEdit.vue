@@ -24,13 +24,12 @@
     import {mapGetters} from "vuex";
 
     export default {
-        name: "EditGroup",
+        name: "DashboardGroupNameEdit",
         props: ['group', 'group-id'],
         data() {
             return {
                 valid: false,
                 name: this.group.name,
-                color: this.group.color,
                 nameRules: [
                     v => !!v || "Name cannot be empty",
                     v => v.length <= 20 || "Name must be no longer than 20 characters"
@@ -43,10 +42,8 @@
                 if (this.group.name !== this.name)
                     this.$store.dispatch('updateDashboardGroup', {
                         groupId: this.groupId,
-                        name: this.name,
-                        color: this.color
-                    })
-                        .then(() => this.finish());
+                        name: this.name
+                    }).then(() => this.finish());
                 else
                     this.finish()
             },
