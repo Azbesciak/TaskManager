@@ -1,19 +1,6 @@
 import {router} from '@/router';
-import {auth, reference} from '@/firebase/base';
-
-export const USERS_STORE = 'users';
-
-export function usersStore() {
-    return reference(USERS_STORE);
-}
-
-export function userReference(userId: string) {
-    return usersStore().child(userId);
-}
-
-export function userDashboardInvitationPath(userId: string, dashboardId: string) {
-    return `${USERS_STORE}/${userId}/invitations/${dashboardId}`;
-}
+import {auth} from '@/firebase/base';
+import {userReference} from '@/firebase/user';
 
 export const userStore = {
     state: {
@@ -21,8 +8,7 @@ export const userStore = {
     },
     getters: {
         user: state => state.user,
-        isUserSignIn: state => state.user != null,
-        currentUserStore: state => state.user && userReference(state.user.id)
+        isUserSignIn: state => state.user != null
     },
     mutations: {
         setUser(state, payload?: User) {
@@ -63,7 +49,7 @@ export const userStore = {
 };
 
 function listenUserUpdates({commit, getters}: any, user: User) {
-    const currentUserStore = getters.currentUserStore;
+    const currentUserStore = userReference(getters.user.id);
     currentUserStore.on('value', databaseUser => {
         if (!databaseUser) {
             return;

@@ -1,32 +1,8 @@
 import {HOME_PAGE, router} from '@/router';
 import {DashboardTask} from '@/store/dashboard-tasks';
-import {reference} from '@/firebase/base';
+import {dashboardGroupReference, dashboardGroupsReference, dashboardReference} from '@/firebase/dashboard';
+import {userDashboardReference, userDashboardsReference} from '@/firebase/user';
 
-export const DASHBOARDS_STORE = `dashboards`;
-
-export function dashboards() {
-    return reference(DASHBOARDS_STORE);
-}
-
-export function dashboardPath(dashboardId: string) {
-    return `${DASHBOARDS_STORE}/${dashboardId}`;
-}
-
-export function dashboardReference(dashboardId: string) {
-    return reference(dashboardPath(dashboardId))
-}
-
-export function dashboardUserInvitationPath(dashboardId: string, userId: string) {
-    return `${dashboardPath(dashboardId)}/invitations/${userId}`
-}
-
-export function dashboardGroupPath(dashboardId: string, groupId: string) {
-    return `${dashboardPath(dashboardId)}/groups/${groupId}`
-}
-
-export function dashboardGroupReference(dashboardId: string, groupId: string) {
-    return reference(dashboardGroupPath(dashboardId, groupId))
-}
 
 export function dashboardIdIfDefined(getters) {
     const dash = getters.dashboard;
@@ -79,8 +55,7 @@ export const dashboardStore = {
                 return;
             }
             const value = createDashboardGroup(name);
-            return dashboardReference(dashboardId)
-                .child('groups')
+            return dashboardGroupsReference(dashboardId)
                 .push(value)
                 .then(v => ({groupId: v.key, ...value}));
         },
@@ -103,17 +78,17 @@ export const dashboardStore = {
                 const owner = getters.user.id;
                 return dispatch('addDashboard', {name})
                     .then(v =>
-                        dashboards().child(v.key)
+                        dashboardReference(v.key)
                             .set({owner, name})
                             .then(() => v)
                     );
             });
         },
-        addDashboard({commit, getters}: any, {name}: DashboardCreateRequest) {
-            return getters.currentUserStore.child('dashboards').push({name});
+        addDashboard({getters}: any, {name}: DashboardCreateRequest) {
+            return userDashboardsReference(getters.user.id).push({name});
         },
-        removeUserDashboard({commit, getters}: any, dashboardId: string) {
-            return getters.currentUserStore.child('dashboards').child(dashboardId).remove();
+        removeUserDashboard({getters}: any, dashboardId: string) {
+            return userDashboardReference(getters.user.id, dashboardId).remove();
         }
     }
 };
@@ -136,6 +111,7 @@ export interface DashboardGroup {
     settings?: DashboardGroupSettings;
     tasks?: { [id: string]: DashboardTask }
 }
+
 export interface DashboardGroupSettings {
     color?: string;
     dark?: boolean;
@@ -151,7 +127,7 @@ export interface DashboardData {
     owner: string;
     name: string;
     users?: { [key: string]: string };
-    invitations?: {[key: string]: boolean}
+    invitations?: { [key: string]: boolean }
     groups?: { [id: string]: DashboardGroup }
 }
 

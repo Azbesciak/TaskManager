@@ -1,4 +1,5 @@
-import {dashboardGroupReference, dashboardIdIfDefined, wrapPromiseExecution} from '@/store/dashboard';
+import {dashboardIdIfDefined, wrapPromiseExecution} from '@/store/dashboard';
+import {dashboardGroupReference} from '@/firebase/dashboard';
 
 export const tasksStore = {
     actions: {

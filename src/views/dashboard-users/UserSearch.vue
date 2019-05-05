@@ -29,7 +29,7 @@
 
 <script>
 
-    import {queryUser} from "../../store/user/invitations";
+    import {queryUser} from "../../firebase/user";
 
     export default {
         name: "UserSearch",

@@ -1,5 +1,6 @@
-import {User, userReference} from '@/store/user';
+import {User} from '@/store/user';
 import Vue from 'vue';
+import {userReference} from '@/firebase/user';
 
 export const userStorePlugins = [store => {
     store.subscribe(mutations => {

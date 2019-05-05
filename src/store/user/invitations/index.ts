@@ -1,20 +1,8 @@
-import {User, userDashboardInvitationPath, USERS_STORE} from '@/store/user';
-import {dashboardUserInvitationPath} from '@/store/dashboard';
+import {User} from '@/store/user';
 import {DashboardInvitation} from '@/store/user-search';
 import {reference} from '@/firebase/base';
-
-
-export function queryUser(query: string) {
-    return reference(USERS_STORE).orderByChild('email')
-        .startAt(query)
-        .limitToFirst(10)
-        .once('value')
-        .then(value =>
-            Object
-                .entries(value.val() || {})
-                .map(([k, v]) => Object.assign(v, {id: k}))
-        );
-}
+import {dashboardUserInvitationPath} from '@/firebase/dashboard';
+import {userDashboardInvitationPath} from '@/firebase/user';
 
 export const userInvitationsStore = {
     actions: {
