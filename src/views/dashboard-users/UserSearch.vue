@@ -28,7 +28,8 @@
 </template>
 
 <script>
-    import {queryUser} from "../../store/user-search";
+
+    import {queryUser} from "../../store/user/invitations";
 
     export default {
         name: "UserSearch",
