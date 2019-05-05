@@ -33,7 +33,7 @@ export function queryUser(query: string) {
         );
 }
 
-let id = 0;
+let currentRequestId = 0;
 
 export const userSearchStore = {
     state: {
@@ -46,14 +46,16 @@ export const userSearchStore = {
         },
         newDashboardUserInvitations(state) {
             state.dashboardInvitedUsers = {
-                invitationsId: ++id,
+                invitationsId: ++currentRequestId,
                 users: {}
             };
         },
-        materializeUserDashboardInvitation(state, payload: User) {
+        materializeUserDashboardInvitation(state, payload: IdentifiedUser) {
             const invitations = state.dashboardInvitedUsers;
-            if (invitations && invitations.invitationsId === id) {
-                Vue.set(invitations.users, payload.id, payload);
+            if (invitations && invitations.invitationsId === currentRequestId) {
+                const {requestId, ...user} = payload;
+                if (requestId === currentRequestId)
+                    Vue.set(invitations.users, payload.id, user);
             }
         }
     },
@@ -71,8 +73,9 @@ export const userSearchStore = {
         fetchDashboardInvitedUsers({getters, commit}, dashboard) {
             const promises = getters.usersResultsPromises;
             commit('newDashboardUserInvitations');
+            const currentId = currentRequestId;
             Object.keys(dashboard.invitations || {})
-                .forEach(userId => cacheUserData(userId, commit, promises));
+                .forEach(userId => cacheUserData(userId, commit, promises, currentId));
         }
     }
 };
@@ -80,15 +83,15 @@ export const userSearchStore = {
 const MAX_RETRIES = 5;
 const RETRY_DELAY = 1000;
 
-function fetchUser(userId: string, commit, retries: number = 0) {
+function fetchUser(userId: string, commit, requestId: number, retries: number = 0) {
     return userReference(userId).once('value').then(user => {
         const res = {id: userId, ...user.val()};
-        commit('materializeUserDashboardInvitation', res);
+        commit('materializeUserDashboardInvitation', {requestId, ...res});
         return res;
     }).catch((e: any) => {
         if (retries > 0) {
-            return retryUserFetchWithDelay(userId, commit, retries);
-        } else {
+            return retryUserFetchWithDelay(userId, commit, requestId, retries);
+        } else if (requestId === currentRequestId) {
             commit('setError', e);
             commit('addUserResultPromise', {userId});
         }
@@ -96,28 +99,31 @@ function fetchUser(userId: string, commit, retries: number = 0) {
 }
 
 
-function retryUserFetchWithDelay(userId: string, commit, retries: number) {
+function retryUserFetchWithDelay(userId: string, commit, requestId: number, retries: number) {
     return new Promise((resolve => setTimeout(
-        () => resolve(fetchUser(userId, commit, retries - 1)),
+        () => resolve(fetchUser(userId, commit, requestId, retries - 1)),
         (MAX_RETRIES - retries) * RETRY_DELAY
     )));
 }
 
-function tryToFetchUser(userId: string, commit, retries: number = MAX_RETRIES) {
-    const promise = fetchUser(userId, commit, retries);
+function tryToFetchUser(userId: string, commit, requestId: number, retries: number = MAX_RETRIES) {
+    const promise = fetchUser(userId, commit, requestId, retries);
     commit('addUserResultPromise', {userId, promise});
 }
 
-function cacheUserData(userId, commit, promises) {
+function cacheUserData(userId: string, commit, promises, requestId: number) {
     const r = promises[userId];
     if (r) {
         r.then(v => {
-            if (v) commit('materializeUserDashboardInvitation', v);
-            else fetchUser(userId, commit);
+            if (v) {
+                commit('materializeUserDashboardInvitation', {requestId, ...v});
+            } else {
+                fetchUser(userId, commit, requestId);
+            }
         });
         return;
     }
-    return tryToFetchUser(userId, commit);
+    return tryToFetchUser(userId, commit, requestId);
 }
 
 function updateDashboardInvitation(commit, user: User, dashboardId: string, isInvitation: boolean) {
@@ -135,4 +141,8 @@ export interface DashboardInvitation {
     user: User;
     dashboardId: string;
     isInvitation?: boolean;
+}
+
+export interface IdentifiedUser extends User{
+    requestId: number;
 }
