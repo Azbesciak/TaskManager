@@ -1,24 +1,18 @@
-import * as firebase from 'firebase';
 import {router} from '@/router';
-import {UserInfo} from 'firebase';
-
-let store: firebase.database.Reference = null;
+import {auth, reference} from '@/firebase/base';
 
 export const USERS_STORE = 'users';
 
 export function usersStore() {
-    if (!store) {
-        store = firebase.database().ref(USERS_STORE);
-    }
-    return store;
+    return reference(USERS_STORE);
 }
 
 export function userReference(userId: string) {
     return usersStore().child(userId);
 }
 
-export function userDashboardInvitation(userId: string, dashboardId: string) {
-    return `${USERS_STORE}/${userId}/invitations/${dashboardId}`
+export function userDashboardInvitationPath(userId: string, dashboardId: string) {
+    return `${USERS_STORE}/${userId}/invitations/${dashboardId}`;
 }
 
 export const userStore = {
@@ -28,7 +22,7 @@ export const userStore = {
     getters: {
         user: state => state.user,
         isUserSignIn: state => state.user != null,
-        currentUserStore: state => state.user && usersStore().child(state.user.id)
+        currentUserStore: state => state.user && userReference(state.user.id)
     },
     mutations: {
         setUser(state, payload?: User) {
@@ -59,10 +53,10 @@ export const userStore = {
         loginUser({commit}: any, {email, password}: UserCredentials) {
             assignUser(commit, a => a.signInWithEmailAndPassword(email, password));
         },
-        loginOAuth({commit}: any, {provider}: OAuthProvider) {
+        loginOAuth({commit}: any, {provider}) {
             assignUser(commit, a => a.signInWithPopup(provider));
         },
-        autoSignIn({commit}: any, user: UserInfo) {
+        autoSignIn({commit}: any, user) {
             setUser(commit, user);
         }
     },
@@ -86,9 +80,7 @@ function cancelUserUpdates(userId: string) {
     userReference(userId).off('value');
 }
 
-type FireBaseUser = firebase.auth.UserCredential;
-
-function setUser(commit: any, user?: UserInfo) {
+function setUser(commit: any, user?) {
     const newUser = user ? {
         id: user.uid,
         name: user.displayName,
@@ -99,12 +91,11 @@ function setUser(commit: any, user?: UserInfo) {
     commit('setUser', newUser);
 }
 
-function assignUser(commit: any, auth: (a: firebase.auth.Auth) => Promise<FireBaseUser | void>) {
+function assignUser(commit: any, authf: (a: any) => Promise<any>) {
     commit('setLoading', true);
-    auth(firebase.auth()).then(
-        (user: any) => {
+    authf(auth()).then(
+        () => {
             commit('setLoading', false);
-
         },
         err => {
             commit('setLoading', false);
@@ -113,7 +104,7 @@ function assignUser(commit: any, auth: (a: firebase.auth.Auth) => Promise<FireBa
     );
 }
 
-function createUserEntry(commit, currentUserStore: firebase.database.Reference, {id, ...userToSave}: User) {
+function createUserEntry(commit, currentUserStore, {id, ...userToSave}: User) {
     currentUserStore
         .set(userToSave)
         .catch(err => commit('setError', err));
@@ -131,9 +122,5 @@ export interface User {
     photoUrl?: string;
     dashboards: string[],
     invitations?: string[]
-}
-
-export interface OAuthProvider {
-    provider: firebase.auth.AuthProvider;
 }
 

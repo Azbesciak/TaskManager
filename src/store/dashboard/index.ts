@@ -1,32 +1,31 @@
-import * as firebase from 'firebase';
 import {HOME_PAGE, router} from '@/router';
 import {DashboardTask} from '@/store/dashboard-tasks';
-
-let store: firebase.database.Reference = null;
+import {reference} from '@/firebase/base';
 
 export const DASHBOARDS_STORE = `dashboards`;
 
-function dashboards() {
-    if (!store) {
-        store = firebase.database().ref(DASHBOARDS_STORE);
-    }
-    return store;
+export function dashboards() {
+    return reference(DASHBOARDS_STORE);
 }
 
-export function dashboard(dashboardId: string) {
+export function dashboardPath(dashboardId: string) {
     return `${DASHBOARDS_STORE}/${dashboardId}`;
 }
 
-export function dashboardUserInvitation(dashboardId: string, userId: string) {
-    return `${dashboard(dashboardId)}/invitations/${userId}`
+export function dashboardReference(dashboardId: string) {
+    return reference(dashboardPath(dashboardId))
 }
 
-export function dashboardGroup(dashboardId: string, groupId: string) {
-    return `${dashboard(dashboardId)}/groups/${groupId}`
+export function dashboardUserInvitationPath(dashboardId: string, userId: string) {
+    return `${dashboardPath(dashboardId)}/invitations/${userId}`
+}
+
+export function dashboardGroupPath(dashboardId: string, groupId: string) {
+    return `${dashboardPath(dashboardId)}/groups/${groupId}`
 }
 
 export function dashboardGroupReference(dashboardId: string, groupId: string) {
-    return dashboards().child(`${dashboardId}/groups/${groupId}`);
+    return reference(dashboardGroupPath(dashboardId, groupId))
 }
 
 export function dashboardIdIfDefined(getters) {
@@ -50,12 +49,12 @@ export const dashboardStore = {
         clearDashboard({getters}) {
             const dashboard = getters.dashboard;
             if (dashboard) {
-                dashboards().child(dashboard.dashboardId).off();
+                dashboardReference(dashboard.dashboardId).off();
             }
         },
         selectDashboard({commit, dispatch}, dashboardId: string) {
             dispatch('clearDashboard').then(() => {
-                const dashBoard = dashboards().child(dashboardId);
+                const dashBoard = dashboardReference(dashboardId);
                 dashBoard.on('value', newData => {
                     commit('setDashboard', newData ? {dashboardId, ...newData.val()} : null);
                 });
@@ -69,7 +68,7 @@ export const dashboardStore = {
                     dispatch('clearDashboard');
                 }
                 return Promise.all([
-                    dashboards().child(dashboardId).remove(),
+                    dashboardReference(dashboardId).remove(),
                     dispatch('removeUserDashboard', dashboardId)
                 ]);
             });
@@ -80,8 +79,7 @@ export const dashboardStore = {
                 return;
             }
             const value = createDashboardGroup(name);
-            return dashboards()
-                .child(dashboardId)
+            return dashboardReference(dashboardId)
                 .child('groups')
                 .push(value)
                 .then(v => ({groupId: v.key, ...value}));

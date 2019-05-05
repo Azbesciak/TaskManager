@@ -1,20 +1,11 @@
-import * as firebase from 'firebase';
-import {User, userDashboardInvitation, USERS_STORE} from '@/store/user';
-import {dashboardUserInvitation} from '@/store/dashboard';
+import {User, userDashboardInvitationPath, USERS_STORE} from '@/store/user';
+import {dashboardUserInvitationPath} from '@/store/dashboard';
 import {DashboardInvitation} from '@/store/user-search';
-
-let _db: firebase.database.Database | null = null;
-
-function db() {
-    if (!_db) {
-        _db = firebase.database();
-    }
-    return _db;
-}
+import {reference} from '@/firebase/base';
 
 
 export function queryUser(query: string) {
-    return db().ref(USERS_STORE).orderByChild('email')
+    return reference(USERS_STORE).orderByChild('email')
         .startAt(query)
         .limitToFirst(10)
         .once('value')
@@ -24,7 +15,6 @@ export function queryUser(query: string) {
                 .map(([k, v]) => Object.assign(v, {id: k}))
         );
 }
-
 
 export const userInvitationsStore = {
     actions: {
@@ -37,14 +27,13 @@ export const userInvitationsStore = {
     }
 };
 
-
 function updateDashboardInvitation(commit, user: User, dashboardId: string, isInvitation: boolean) {
     const updates = {};
     commit('addUserResultPromise', {userId: user.id, promise: Promise.resolve(user)});
     const value = isInvitation ? true : null;
-    updates[userDashboardInvitation(user.id, dashboardId)] = value;
-    updates[dashboardUserInvitation(dashboardId, user.id)] = value;
-    return db().ref().update(updates).catch(e => {
+    updates[userDashboardInvitationPath(user.id, dashboardId)] = value;
+    updates[dashboardUserInvitationPath(dashboardId, user.id)] = value;
+    return reference().update(updates).catch(e => {
         commit('setError', e);
     });
 }
