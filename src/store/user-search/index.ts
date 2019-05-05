@@ -77,21 +77,47 @@ export const userSearchStore = {
     }
 };
 
-function cacheUserData(userId, commit, promises) {
-    const r = promises[userId];
-    if (r) {
-        r.then(v => v && commit('materializeUserDashboardInvitation', v));
-        return;
-    }
-    const promise = userReference(userId).once('value').then(user => {
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 1000;
+
+function fetchUser(userId: string, commit, retries: number = 0) {
+    return userReference(userId).once('value').then(user => {
         const res = {id: userId, ...user.val()};
         commit('materializeUserDashboardInvitation', res);
         return res;
-    }).catch(e => {
-        commit('setError', e);
-        commit('addUserResultPromise', {userId});
+    }).catch((e: any) => {
+        if (retries > 0) {
+            return retryUserFetchWithDelay(userId, commit, retries);
+        } else {
+            commit('setError', e);
+            commit('addUserResultPromise', {userId});
+        }
     });
+}
+
+
+function retryUserFetchWithDelay(userId: string, commit, retries: number) {
+    return new Promise((resolve => setTimeout(
+        () => resolve(fetchUser(userId, commit, retries - 1)),
+        (MAX_RETRIES - retries) * RETRY_DELAY
+    )));
+}
+
+function tryToFetchUser(userId: string, commit, retries: number = MAX_RETRIES) {
+    const promise = fetchUser(userId, commit, retries);
     commit('addUserResultPromise', {userId, promise});
+}
+
+function cacheUserData(userId, commit, promises) {
+    const r = promises[userId];
+    if (r) {
+        r.then(v => {
+            if (v) commit('materializeUserDashboardInvitation', v);
+            else fetchUser(userId, commit);
+        });
+        return;
+    }
+    return tryToFetchUser(userId, commit);
 }
 
 function updateDashboardInvitation(commit, user: User, dashboardId: string, isInvitation: boolean) {
