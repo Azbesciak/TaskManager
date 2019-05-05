@@ -38,15 +38,11 @@ let id = 0;
 export const userSearchStore = {
     state: {
         dashboardInvitedUsers: {},
-        usersResultsPromises: {},
-        usersResults: {}
+        usersResultsPromises: {}
     },
     mutations: {
-        addUserResult(state, user: User) {
-            state.usersResults[user.id] = user;
-        },
         addUserResultPromise(state, {userId, promise}) {
-            state.usersResults[userId] = promise;
+            state.usersResultsPromises[userId] = promise;
         },
         newDashboardUserInvitations(state) {
             state.dashboardInvitedUsers = {
@@ -62,7 +58,6 @@ export const userSearchStore = {
         }
     },
     getters: {
-        usersResults: state => state.usersResults,
         usersResultsPromises: state => state.usersResultsPromises,
         dashboardInvitedUsers: state => state.dashboardInvitedUsers.users
     },
@@ -75,21 +70,15 @@ export const userSearchStore = {
         },
         fetchDashboardInvitedUsers({getters, commit}, dashboard) {
             const promises = getters.usersResultsPromises;
-            const readyUserData = getters.usersResults;
             commit('newDashboardUserInvitations');
             Object.keys(dashboard.invitations || {})
-                .forEach(userId => cacheUserData(readyUserData, userId, commit, promises));
+                .forEach(userId => cacheUserData(userId, commit, promises));
         }
     }
 };
 
-function cacheUserData(ready, userId, commit, promises) {
-    let r = ready[userId];
-    if (r) {
-        commit('materializeUserDashboardInvitation', r);
-        return;
-    }
-    r = promises[userId];
+function cacheUserData(userId, commit, promises) {
+    const r = promises[userId];
     if (r) {
         r.then(v => v && commit('materializeUserDashboardInvitation', v));
         return;
@@ -97,7 +86,6 @@ function cacheUserData(ready, userId, commit, promises) {
     const promise = userReference(userId).once('value').then(user => {
         const res = {id: userId, ...user.val()};
         commit('materializeUserDashboardInvitation', res);
-        commit('addUserResult', res);
         return res;
     }).catch(e => {
         commit('setError', e);
@@ -106,9 +94,9 @@ function cacheUserData(ready, userId, commit, promises) {
     commit('addUserResultPromise', {userId, promise});
 }
 
-function updateDashboardInvitation(commit, user, dashboardId, isInvitation) {
+function updateDashboardInvitation(commit, user: User, dashboardId: string, isInvitation: boolean) {
     const updates = {};
-    commit('addUserResult', user);
+    commit('addUserResultPromise', {userId: user.id, promise: Promise.resolve(user)});
     const value = isInvitation ? true : null;
     updates[userDashboardInvitation(user.id, dashboardId)] = value;
     updates[dashboardUserInvitation(dashboardId, user.id)] = value;
