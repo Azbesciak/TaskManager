@@ -13,7 +13,7 @@
             <v-list-tile-title v-text="user.name || user.email"></v-list-tile-title>
             <v-list-tile-sub-title v-if="user.name && user.email">{{user.email}}</v-list-tile-sub-title>
         </v-list-tile-content>
-        <v-list-tile-action>
+        <v-list-tile-action v-if="$slots.default">
             <slot></slot>
         </v-list-tile-action>
     </v-list-tile>
