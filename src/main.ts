@@ -8,7 +8,7 @@ import firebase from 'firebase';
 import ErrorAlert from './components/ErrorAlert.vue';
 import DashboardList from './components/DashboardsList.vue';
 import CreateDashboard from '@/views/dashboard/CreateDashboard.vue';
-import UserSnapshot from '@/views/dashboard-users/UserSnapshot.vue';
+import UserSnapshot from '@/views/user/UserSnapshot.vue';
 
 Vue.component('error-alert', ErrorAlert);
 Vue.component('dashboards-list', DashboardList);

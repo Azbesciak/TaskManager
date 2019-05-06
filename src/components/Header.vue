@@ -73,7 +73,7 @@
 <script>
     import {mapGetters} from "vuex";
     import {goToDashboard} from "../router";
-    import UserMenuPreview from "./UserMenuPreview";
+    import UserMenuPreview from "../views/user/UserMenuPreview";
 
     export default {
         components: {UserMenuPreview},
