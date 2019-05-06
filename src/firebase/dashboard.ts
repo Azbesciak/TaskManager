@@ -41,6 +41,9 @@ export function dashboardUserPath(dashboardId: string, userId: string) {
 export function dashboardNamePath(dashboardId: string) {
     return `${dashboardNamesPath()}/${dashboardId}`;
 }
+export function dashboardNameReference(dashboardId: string) {
+    return reference(dashboardNamePath(dashboardId));
+}
 
 export function dashboardGroupsPath(dashboardId: string) {
     return `${dashboardPath(dashboardId)}/groups`;

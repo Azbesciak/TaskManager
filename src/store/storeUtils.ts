@@ -10,7 +10,10 @@ export function listenOnUpdates(commit, ref, setter: string) {
         if (!value) {
             return;
         }
-        commit(setter, value.val() || {});
+        const result = Object
+            .entries(value.val() || {})
+            .map(([k, v]) => Object.assign(v, {id: k}));
+        commit(setter, result);
     });
 }
 
@@ -27,7 +30,7 @@ export function wrapPromiseExecution<T>(commit, f: () => Promise<T>) {
 }
 
 export function executeIfDashboardDefined<T>(commit, getters, f: (dashboardId: string) => Promise<T>) {
-    return ifDashboardDefined(commit, getters, dashboardId => wrapPromiseExecution(commit, () => f(dashboardId)))
+    return ifDashboardDefined(commit, getters, dashboardId => wrapPromiseExecution(commit, () => f(dashboardId)));
 }
 
 export function ifDashboardDefined<T>(commit, getters, f: (dashboardId: string) => T) {
@@ -38,7 +41,7 @@ export function ifDashboardDefined<T>(commit, getters, f: (dashboardId: string) 
     return f(dashboardId);
 }
 
-export function getChangeListener<T extends {id}>(
+export function getChangeListener<T extends { id }>(
     check: (type: string, payload: any) => payload is T,
     onOldValue: (value: T) => void,
     onNewValue: (value: T) => void,

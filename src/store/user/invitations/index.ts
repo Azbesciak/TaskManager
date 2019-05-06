@@ -24,8 +24,8 @@ export const invitationsPlugin = store => {
 
 export const userInvitationsStore = {
     state: {
-        dashboardInvitedUsers: {},
-        userDashboardInvitations: {},
+        dashboardInvitedUsers: [],
+        userDashboardInvitations: [],
     },
     getters: {
         dashboardInvitedUsers: state => state.dashboardInvitedUsers,
@@ -36,13 +36,13 @@ export const userInvitationsStore = {
             state.dashboardInvitedUsers = payload;
         },
         clearDashboardInvitedUsers(state) {
-            state.dashboardInvitedUsers = {};
+            state.dashboardInvitedUsers = [];
         },
         setUserDashboardInvitations(state, payload) {
             state.userDashboardInvitations = payload;
         },
         clearUserDashboardInvitations(state) {
-            state.userDashboardInvitations = {};
+            state.userDashboardInvitations = [];
         },
     },
     actions: {

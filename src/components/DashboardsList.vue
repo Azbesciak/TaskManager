@@ -3,9 +3,9 @@
         <v-subheader>Your Dashboards</v-subheader>
         <v-divider></v-divider>
         <v-list-tile
-                v-for="(value, key) in userDashboards"
-                :key="key"
-                @click="goToDashboard(key, value.name)"
+                v-for="value in userDashboards"
+                :key="value.id"
+                @click="goToDashboard(value.id, value.name)"
         >
             <v-list-tile-content>
                 <v-list-tile-title v-html="value.name"></v-list-tile-title>
