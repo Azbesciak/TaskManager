@@ -11,6 +11,7 @@
         </v-list-tile-avatar>
         <v-list-tile-content>
             <v-list-tile-title v-text="user.name || user.email"></v-list-tile-title>
+            <v-list-tile-sub-title v-if="user.name && user.email">{{user.email}}</v-list-tile-sub-title>
         </v-list-tile-content>
         <v-list-tile-action>
             <slot></slot>
