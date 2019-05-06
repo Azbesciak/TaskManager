@@ -1,6 +1,23 @@
 import {router} from '@/router';
 import {auth} from '@/firebase/base';
 import {userReference} from '@/firebase/user';
+import {getChangeListener} from '@/store/storeUtils';
+
+export const userStorePlugin = store => {
+    const userListener = getChangeListener(
+        isSetUser,
+        user => cancelUserUpdates(user.id),
+        user => listenUserUpdates(store, user),
+        () => router.push('/')
+    );
+    store.subscribe(({type, payload}) => {
+        userListener(type, payload);
+    });
+};
+
+export function isSetUser(type: string, payload: any): payload is User {
+    return type === 'setUser';
+}
 
 export const userStore = {
     state: {
@@ -12,20 +29,11 @@ export const userStore = {
     },
     mutations: {
         setUser(state, payload?: User) {
-            if (state.user) {
-                cancelUserUpdates(state.user.id);
-            }
-            const previous = state.user;
             state.user = payload;
-            if (payload && (!previous || previous.id === payload.id)) {
-                listenUserUpdates(this, payload);
-            }
-            router.push('/');
         },
         updateUser(state, payload?: User) {
             if (payload && state.user && payload.id === state.user.id) {
-                const {name, email, photoUrl, dashboards} = payload;
-                state.user = {id: payload.id, name, email, photoUrl, dashboards};
+                state.user = payload;
             }
         }
     },
@@ -106,7 +114,5 @@ export interface User {
     name: string;
     email: string;
     photoUrl?: string;
-    dashboards: string[],
-    invitations?: string[]
 }
 

@@ -3,7 +3,7 @@
         <v-subheader>Your Dashboards</v-subheader>
         <v-divider></v-divider>
         <v-list-tile
-                v-for="(value, key) in user.dashboards"
+                v-for="(value, key) in userDashboards"
                 :key="key"
                 @click="goToDashboard(key, value.name)"
         >
@@ -28,7 +28,7 @@
             createDashboardEnabled: false
         }),
         computed: {
-            ...mapGetters(["user"])
+            ...mapGetters(["userDashboards"])
         },
         methods: {
             goToDashboard(id, name) {

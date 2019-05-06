@@ -45,7 +45,7 @@
                     <v-menu open-on-hover bottom  offset-y v-if="isUserSignIn">
                         <template v-slot:activator="{ on }">
                             <v-btn flat v-on="on" @click="goToDashboard">
-                                {{dashboard ? dashboard.name : 'Your Dashboards'}}
+                                {{name}}
                             </v-btn>
                         </template>
                         <dashboards-list></dashboards-list>
@@ -94,7 +94,10 @@
             }
         },
         computed: {
-            ...mapGetters(['user', 'isUserSignIn', 'dashboard'])
+            ...mapGetters(['user', 'isUserSignIn', 'dashboard']),
+            name() {
+                return this.dashboard ? this.dashboard.name : 'Your Dashboards'
+            }
         },
         methods: {
             onLogout() {
@@ -103,7 +106,7 @@
             goToDashboard() {
                 const dashboard = this.dashboard;
                 if (dashboard) {
-                    goToDashboard(dashboard.dashboardId, dashboard.name)
+                    goToDashboard(dashboard.id, dashboard.name)
                 }
             }
         }

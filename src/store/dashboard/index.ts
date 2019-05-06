@@ -1,52 +1,91 @@
 import {HOME_PAGE, router} from '@/router';
 import {DashboardTask} from '@/store/dashboard-tasks';
-import {dashboardGroupReference, dashboardGroupsReference, dashboardReference} from '@/firebase/dashboard';
-import {userDashboardReference, userDashboardsReference} from '@/firebase/user';
+import {
+    dashboardGroupReference,
+    dashboardGroupsReference, dashboardNamePath,
+    dashboardPath,
+    dashboardReference, dashboardUserPath, dashboardUsersPath, dashboardUsersReference
+} from '@/firebase/dashboard';
+import {userDashboardPath, userDashboardsReference} from '@/firebase/user';
+import {reference} from '@/firebase/base';
+import {
+    cleanUpdates,
+    executeIfDashboardDefined,
+    getChangeListener, ifDashboardDefined,
+    listenOnUpdates,
+    wrapPromiseExecution
+} from '@/store/storeUtils';
+import {isSetUser} from '@/store/user';
 
 
 export function dashboardIdIfDefined(getters) {
     const dash = getters.dashboard;
-    return dash && dash.dashboardId;
+    return dash && dash.id;
+}
+
+export const dashboardPlugins = store => {
+    const userListener = getChangeListener(
+        isSetUser,
+        user => cleanUserState(store, user.id),
+        user => listenForNewUserUpdates(store, user.id)
+    );
+    store.subscribe(({type, payload}) => {
+        userListener(type, payload);
+    });
+};
+
+export function isSetDashboard(type: string, payload: any): payload is DashboardData {
+    return type === 'setDashboard';
 }
 
 export const dashboardStore = {
     state: {
         dashboard: null,
+        userDashboards: {}
     },
     getters: {
-        dashboard: state => state.dashboard
+        dashboard: state => state.dashboard,
+        userDashboards: state => state.userDashboards
     },
     mutations: {
         setDashboard(state, payload: DashboardData) {
             state.dashboard = payload;
+            updateDashboardName(state);
+        },
+        clearDashboard(state) {
+            state.dashboard = null;
+        },
+        setUserDashboards(state, payload) {
+            state.userDashboards = payload;
+            updateDashboardName(state);
+        },
+        clearUserDashboards(state) {
+            state.userDashboards = {};
         }
     },
     actions: {
-        clearDashboard({getters}) {
+        clearDashboard({getters, commit}) {
             const dashboard = getters.dashboard;
             if (dashboard) {
-                dashboardReference(dashboard.dashboardId).off();
+                dashboardReference(dashboard.id).off();
+                commit('clearDashboard');
             }
         },
         selectDashboard({commit, dispatch}, dashboardId: string) {
             dispatch('clearDashboard').then(() => {
-                const dashBoard = dashboardReference(dashboardId);
-                dashBoard.on('value', newData => {
-                    commit('setDashboard', newData ? {dashboardId, ...newData.val()} : null);
+                dashboardReference(dashboardId).on('value', newData => {
+                    commit('setDashboard', newData ? {id: dashboardId, ...newData.val()} : null);
                 });
             });
         },
         removeDashboard({commit, getters, dispatch}, dashboardId: string) {
             const dashboard = getters.dashboard;
             return wrapPromiseExecution(commit, () => {
-                if (dashboard && dashboard.dashboardId === dashboardId) {
+                if (dashboard && dashboard.id === dashboardId) {
                     router.push(HOME_PAGE);
                     dispatch('clearDashboard');
                 }
-                return Promise.all([
-                    dashboardReference(dashboardId).remove(),
-                    dispatch('removeUserDashboard', dashboardId)
-                ]);
+                return dispatch('removeUserDashboard', dashboardId);
             });
         },
         addDashboardGroup({dispatch, getters}, name: string) {
@@ -75,34 +114,54 @@ export const dashboardStore = {
         },
         createDashboard({commit, dispatch, getters}, {name}: DashboardCreateRequest) {
             return wrapPromiseExecution(commit, () => {
-                const owner = getters.user.id;
-                return dispatch('addDashboard', {name})
-                    .then(v =>
-                        dashboardReference(v.key)
-                            .set({owner, name})
-                            .then(() => v)
-                    );
+                const ownerId = getters.user.id;
+                const dashboardId = userDashboardsReference(ownerId).push().key;
+                if (!dashboardId) {
+                    return;
+                }
+                const ownerEmail = getters.user.email;
+                const updates = {};
+                const {id, ...userData} = getters.user;
+                updates[userDashboardPath(ownerId, dashboardId)] = {name};
+                updates[dashboardNamePath(dashboardId)] = {ownerId, name, ownerEmail};
+                updates[dashboardUserPath(dashboardId, ownerId)] = userData;
+                return reference().update(updates);
             });
         },
-        addDashboard({getters}: any, {name}: DashboardCreateRequest) {
-            return userDashboardsReference(getters.user.id).push({name});
-        },
-        removeUserDashboard({getters}: any, dashboardId: string) {
-            return userDashboardReference(getters.user.id, dashboardId).remove();
+        removeUserDashboard({commit}: any, dashboardId: string) {
+            return wrapPromiseExecution(commit, () => {
+                return dashboardUsersReference(dashboardId).once('value').then(users => {
+                    const updates = {};
+                    Object.keys(users.val() || {})
+                        .forEach(userId => updates[userDashboardPath(userId, dashboardId)] = null);
+                    updates[dashboardNamePath(dashboardId)] = null;
+                    updates[dashboardPath(dashboardId)] = null;
+                    updates[dashboardUsersPath(dashboardId)] = null;
+                    return reference().update(updates);
+                });
+            });
         }
     }
 };
 
-export function wrapPromiseExecution<T>(commit, f: () => Promise<T>) {
-    commit('setLoading', true);
-    return f()
-        .then(v => {
-            commit('setLoading', false);
-            return v;
-        }).catch(e => {
-            commit('setError', e);
-            commit('setLoading', false);
-        });
+function cleanUserState({commit, getters}, userId: string) {
+    cleanUpdates(commit, userDashboardsReference(userId), 'clearUserDashboards');
+    ifDashboardDefined(commit, getters, dashboardId =>
+        cleanUpdates(commit, dashboardReference(dashboardId), 'clearDashboard')
+    );
+}
+
+function listenForNewUserUpdates({commit}, userId: string) {
+    listenOnUpdates(commit, userDashboardsReference(userId), 'setUserDashboards');
+}
+
+function updateDashboardName(state) {
+    if (state.dashboard && state.userDashboards) {
+        const dashboardHeader = state.userDashboards[state.dashboard.id];
+        if (dashboardHeader) {
+            state.dashboard.name = dashboardHeader.name;
+        }
+    }
 }
 
 export interface DashboardGroup {
@@ -122,12 +181,16 @@ function createDashboardGroup(name: string): DashboardGroup {
     return {name, settings: {color: ''}};
 }
 
-export interface DashboardData {
-    dashboardId: string;
+export interface DashboardHeader {
+    id: string;
     owner: string;
     name: string;
-    users?: { [key: string]: string };
-    invitations?: { [key: string]: boolean }
+    ownerEmail: string;
+}
+
+export interface DashboardData {
+    id: string;
+    name?: string;
     groups?: { [id: string]: DashboardGroup }
 }
 

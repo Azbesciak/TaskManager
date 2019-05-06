@@ -1,5 +1,5 @@
-import {dashboardIdIfDefined, wrapPromiseExecution} from '@/store/dashboard';
 import {dashboardGroupReference} from '@/firebase/dashboard';
+import {executeIfDashboardDefined} from '@/store/storeUtils';
 
 export const tasksStore = {
     actions: {
@@ -25,14 +25,6 @@ export const tasksStore = {
         }
     }
 };
-
-export function executeIfDashboardDefined<T>(commit, getters, f: (dashboardId: string) => Promise<T>) {
-    const dashboardId = dashboardIdIfDefined(getters);
-    if (!dashboardId) {
-        return;
-    }
-    return wrapPromiseExecution(commit, () => f(dashboardId));
-}
 
 export interface DashboardTask {
     taskId?: string;
