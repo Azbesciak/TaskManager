@@ -58,14 +58,7 @@
                         Logout
                     </v-btn>
                     <v-btn flat>
-                        <v-list-tile avatar>
-                            <v-list-tile-avatar v-if="user.photoUrl">
-                                <img :src="user.photoUrl">
-                            </v-list-tile-avatar>
-                            <v-list-tile-content>
-                                <v-list-tile-title>{{user.name || user.email}}</v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
+                        <user-snapshot class="user-snapshot" :user="user"></user-snapshot>
                     </v-btn>
                 </template>
                 <template v-else>
@@ -112,3 +105,8 @@
         }
     }
 </script>
+<style>
+    .user-snapshot {
+        text-transform: none;
+    }
+</style>
