@@ -1,9 +1,13 @@
 import {isSetUser, User} from '@/store/user';
 import {reference} from '@/firebase/base';
-import {dashboardUserInvitationPath, dashboardUserInvitationsReference} from '@/firebase/dashboard';
-import {userDashboardInvitationPath, userDashboardInvitationsReference} from '@/firebase/user';
+import {dashboardUserInvitationPath, dashboardUserInvitationsReference, dashboardUserPath} from '@/firebase/dashboard';
+import {
+    userDashboardInvitationPath,
+    userDashboardInvitationsReference,
+    userDashboardPath,
+} from '@/firebase/user';
 import {cleanUpdates, getChangeListener, listenOnUpdates} from '@/store/storeUtils';
-import {isSetDashboard} from '@/store/dashboard';
+import {getDashboardName, isSetDashboard} from '@/store/dashboard';
 
 export const invitationsPlugin = store => {
     const userListener = getChangeListener(
@@ -46,21 +50,55 @@ export const userInvitationsStore = {
         },
     },
     actions: {
-        sendDashboardInvitation({commit}, {user, dashboardId}: DashboardInvitation) {
-            return updateDashboardInvitation(commit, user, dashboardId, true);
+        sendDashboardInvitation(store, invitation: DashboardInvitation) {
+            return updateDashboardInvitation(store, invitation, true);
         },
-        sendDashboardInvitationCancellation({commit}, {user, dashboardId}: DashboardInvitation) {
-            return updateDashboardInvitation(commit, user, dashboardId, false);
+        sendDashboardInvitationCancellation(store, invitation: DashboardInvitation) {
+            return updateDashboardInvitation(store, invitation, false);
+        },
+        acceptDashboardInvitation({commit, getters}, {dashboardId, name}: DashboardHeader) {
+            if (!getters.user)
+                return;
+            const {id, ...user} = getters.user;
+            const updates = {};
+            addInvitationCancelUpdate(updates, id, dashboardId);
+            updates[dashboardUserPath(dashboardId, id)] = user;
+            updates[userDashboardPath(id, dashboardId)] = {name};
+            return executeUpdate(commit, updates);
+        },
+        discardDashboardInvitation({commit, getters}, dashboardId: string) {
+            if (!getters.user)
+                return;
+            const {id, ...user} = getters.user;
+            const updates = {};
+            addInvitationCancelUpdate(updates, id, dashboardId);
+            return executeUpdate(commit, updates);
         }
     }
 };
 
-function updateDashboardInvitation(commit, user: User, dashboardId: string, isInvitation: boolean) {
+export function addInvitationCancelUpdate(updates: any, userId: string, dashboardId: string) {
+    updates[userDashboardInvitationPath(userId, dashboardId)] = null;
+    updates[dashboardUserInvitationPath(dashboardId, userId)] = null;
+}
+
+function updateDashboardInvitation({commit, getters}, {user, dashboardId}: DashboardInvitation, isInvitation: boolean) {
     const updates = {};
     const {id, ...userData} = user;
-    const value = isInvitation ? userData : null;
-    updates[userDashboardInvitationPath(id, dashboardId)] = value;
-    updates[dashboardUserInvitationPath(dashboardId, id)] = value;
+    if (isInvitation) {
+        const {...sender} = getters.user;
+        if (!sender) return;
+        delete sender.id;
+        const name = getDashboardName(getters, dashboardId);
+        updates[userDashboardInvitationPath(id, dashboardId)] = {name, sender};
+        updates[dashboardUserInvitationPath(dashboardId, id)] = userData;
+    } else {
+        addInvitationCancelUpdate(updates, id, dashboardId);
+    }
+    return executeUpdate(commit, updates);
+}
+
+function executeUpdate(commit, updates) {
     return reference().update(updates).catch(e => {
         commit('setError', e);
     });
@@ -86,4 +124,8 @@ export interface DashboardInvitation {
     user: User;
     dashboardId: string;
     isInvitation?: boolean;
+}
+export interface DashboardHeader {
+    dashboardId: string;
+    name: string;
 }

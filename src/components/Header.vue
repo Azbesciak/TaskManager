@@ -57,9 +57,7 @@
                         <v-icon left>exit_to_app</v-icon>
                         Logout
                     </v-btn>
-                    <v-btn flat>
-                        <user-snapshot class="user-snapshot" :user="user"></user-snapshot>
-                    </v-btn>
+                    <user-menu-preview></user-menu-preview>
                 </template>
                 <template v-else>
                     <v-btn flat v-for="item in menuItems" :key="item.title" :to="item.link">
@@ -75,8 +73,10 @@
 <script>
     import {mapGetters} from "vuex";
     import {goToDashboard} from "../router";
+    import UserMenuPreview from "./UserMenuPreview";
 
     export default {
+        components: {UserMenuPreview},
         data() {
             return {
                 sideNav: false,

@@ -125,7 +125,7 @@ export const dashboardStore = {
                 const ownerEmail = getters.user.email;
                 const updates = {};
                 const {id, ...userData} = getters.user;
-                updates[userDashboardPath(ownerId, dashboardId)] = {name, ownerId};
+                updates[userDashboardPath(ownerId, dashboardId)] = {name};
                 updates[dashboardNamePath(dashboardId)] = {ownerId, name, ownerEmail};
                 updates[dashboardUserPath(dashboardId, ownerId)] = userData;
                 return reference().update(updates);
@@ -222,7 +222,15 @@ function updateDashboardName(state) {
         const dashboardHeader = state.userDashboards.find(v => v.id === state.dashboard.id);
         if (dashboardHeader) {
             state.dashboard.name = dashboardHeader.name;
+            state.dashboard.ownerId = dashboardHeader.ownerId;
         }
+    }
+}
+
+export function getDashboardName(getters, dashboardId: string) {
+    const res = getters.userDashboards.find(v => v.id === dashboardId);
+    if (res) {
+        return res.name
     }
 }
 
