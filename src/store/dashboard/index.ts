@@ -116,6 +116,7 @@ export const dashboardStore = {
             return wrapPromiseExecution(commit, () => dashboardGroupReference(dashboardId, groupId).remove());
         },
         createDashboard({commit, dispatch, getters}, {name}: DashboardCreateRequest) {
+            // @ts-ignore
             return wrapPromiseExecution(commit, () => {
                 const ownerId = getters.user.id;
                 const dashboardId = userDashboardsReference(ownerId).push().key;
@@ -143,6 +144,7 @@ export const dashboardStore = {
 
 function onRemoveDashboard({commit, getters, dispatch}, user: User, dashboardId: string) {
     const currentUser = getters.user;
+    // @ts-ignore
     return wrapPromiseExecution(commit, () => {
         if (!currentUser) {
             return;

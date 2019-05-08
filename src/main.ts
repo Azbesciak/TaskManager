@@ -11,6 +11,7 @@ import CreateDashboard from '@/views/dashboard/CreateDashboard.vue';
 import UserSnapshot from '@/views/user/UserSnapshot.vue';
 
 Vue.component('error-alert', ErrorAlert);
+// @ts-ignore
 Vue.component('dashboards-list', DashboardList);
 Vue.component('create-dashboard', CreateDashboard);
 Vue.component('user-snapshot', UserSnapshot);

@@ -26,6 +26,7 @@ export class Fetcher {
             const res = {id: userId, ...user.val()};
             commit(this.materializeName, {requestId, ...res});
             return res;
+            // @ts-ignore
         }).catch((e: any) => {
             if (retries > 0) {
                 return this.retryFetchWithDelay(userId, commit, requestId, retries);
