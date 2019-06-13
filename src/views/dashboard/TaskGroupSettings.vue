@@ -41,9 +41,9 @@
                 </v-list>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="red" flat @click.stop="removeGroup">Remove</v-btn>
-                    <v-btn flat @click.stop="visible = false">Cancel</v-btn>
-                    <v-btn color="primary" flat @click="saveSettings">Save</v-btn>
+                    <v-btn class="small-card-action-btn" color="red" flat @click.stop="removeGroup" >Remove</v-btn>
+                    <v-btn class="small-card-action-btn" flat @click.stop="visible = false">Cancel</v-btn>
+                    <v-btn class="small-card-action-btn" color="primary" flat @click="saveSettings">Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-menu>
@@ -116,11 +116,7 @@
     .vue-swatches__container {
         padding: 0 !important;
     }
-    /*.vue-swatches__check__circle {*/
-    /*    svg {*/
-    /*        position: absolute;*/
-    /*        margin-top: 6px;*/
-    /*        margin-left: 6px;*/
-    /*    }*/
-    /*}*/
+    .small-card-action-btn {
+        padding: 5px;
+    }
 </style>
