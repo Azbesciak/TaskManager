@@ -1,12 +1,16 @@
-import {dashboardIdIfDefined} from '@/store/dashboard';
-
+import {dashboardIdIfDefined} from "@/store/dashboard";
+import Vue from 'vue';
 export function cleanUpdates(commit, ref, setter: string) {
     commit(setter);
     ref.off();
 }
 
+export const set = property => (state, payload) => Vue.set(state, property, payload);
+
+export const toggle = property => state => Vue.set(state, property, !state[property]);
+
 export function listenOnUpdates(commit, ref, setter: string) {
-    ref.on('value', value => {
+    ref.on("value", value => {
         if (!value) {
             return;
         }
@@ -18,14 +22,14 @@ export function listenOnUpdates(commit, ref, setter: string) {
 }
 
 export function wrapPromiseExecution<T>(commit, f: () => Promise<T>) {
-    commit('setLoading', true);
+    commit("setLoading", true);
     return f()
         .then(v => {
-            commit('setLoading', false);
+            commit("setLoading", false);
             return v;
         }).catch(e => {
-            commit('setError', e);
-            commit('setLoading', false);
+            commit("setError", e);
+            commit("setLoading", false);
         });
 }
 

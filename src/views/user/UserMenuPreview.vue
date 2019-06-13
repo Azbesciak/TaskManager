@@ -6,11 +6,10 @@
             offset-y
     >
         <template v-slot:activator="{ on }">
-            <v-btn flat v-on="on">
-                <user-snapshot class="user-snapshot" :user="user"></user-snapshot>
-                <v-badge color="red" overlap v-if="showNotifications">
-                    <template v-slot:badge>
-                        <span>{{notificationSign}}</span>
+            <v-btn flat icon v-on="on">
+                <v-badge color="red" class="notification-badge" overlap >
+                    <template v-slot:badge v-if="showNotifications">
+                        <span class="notification-badge-number">{{notificationSign}}</span>
                     </template>
                     <v-icon>notification_important</v-icon>
                 </v-badge>
@@ -43,3 +42,12 @@
 
     }
 </script>
+<style>
+    .notification-badge {
+        top: 3px;
+    }
+    .notification-badge-number {
+        line-height: 20px;
+        font-weight: 500;
+    }
+</style>

@@ -1,7 +1,7 @@
 <template>
     <v-container grid-list-md text-xs-center>
         <v-layout flex wrap>
-            <dashboard-users :dashboard-id="id"></dashboard-users>
+            <dashboard-users :dashboard-id="id" xs12></dashboard-users>
             <dashboard-view :dashboard-id="id" :dashboard-name="name"></dashboard-view>
         </v-layout>
     </v-container>

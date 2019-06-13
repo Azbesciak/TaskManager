@@ -11,6 +11,10 @@ export function goToDashboard(id, name) {
     router.push(`${HOME_PAGE}/${id}/${name}`)
 }
 
+export function goToDashboards() {
+    router.push(HOME_PAGE);
+}
+
 export const router = new Router({
     mode: 'history',
     base: process.env.BASE_URL,
@@ -46,6 +50,15 @@ export const router = new Router({
             component: () => import(/* webpackChunkName: "dashboard" */ './views/dashboard/Dashboard.vue')
         },
     ],
+    scrollBehavior (to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition
+        }
+        if (to.hash) {
+            return { selector: to.hash }
+        }
+        return { x: 0, y: 0 }
+    }
 });
 router.beforeEach((to, from, next) => {
     const currentUser = store.getters.isUserSignIn;

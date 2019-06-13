@@ -1,26 +1,37 @@
 <template>
     <v-app>
-        <header-component></header-component>
-        <main>
-            <router-view></router-view>
-        </main>
+        <core-toolbar/>
+        <core-drawer/>
         <error-alert></error-alert>
+        <core-view/>
     </v-app>
 </template>
 
 <script>
-    import HeaderComponent from "./components/Header";
+    import View from "./components/core/View";
+    import Drawer from "./components/core/Drawer";
+    import Toolbar from "./components/core/Toolbar";
+
     export default {
         components: {
-            'header-component': HeaderComponent
+            'core-view': View,
+            'core-drawer': Drawer,
+            'core-toolbar': Toolbar
         }
     }
 </script>
-<style>
+<style lang="scss">
+    @import '@/styles/index.scss';
+    /* Remove in 1.2 */
+    .v-datatable thead th.column.sortable i {
+        vertical-align: unset;
+    }
+
     .custom-loader {
         animation: loader 1s infinite;
         display: flex;
     }
+
     @-moz-keyframes loader {
         from {
             transform: rotate(0);
@@ -29,6 +40,7 @@
             transform: rotate(360deg);
         }
     }
+
     @-webkit-keyframes loader {
         from {
             transform: rotate(0);
@@ -37,6 +49,7 @@
             transform: rotate(360deg);
         }
     }
+
     @-o-keyframes loader {
         from {
             transform: rotate(0);
@@ -45,6 +58,7 @@
             transform: rotate(360deg);
         }
     }
+
     @keyframes loader {
         from {
             transform: rotate(0);

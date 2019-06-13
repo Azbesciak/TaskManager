@@ -9,12 +9,15 @@ import ErrorAlert from './components/ErrorAlert.vue';
 import DashboardList from './components/DashboardsList.vue';
 import CreateDashboard from '@/views/dashboard/CreateDashboard.vue';
 import UserSnapshot from '@/views/user/UserSnapshot.vue';
+import Offset from '@/components/helper/Offset.vue';
+import {sync} from 'vuex-router-sync';
 
 Vue.component('error-alert', ErrorAlert);
 // @ts-ignore
 Vue.component('dashboards-list', DashboardList);
 Vue.component('create-dashboard', CreateDashboard);
 Vue.component('user-snapshot', UserSnapshot);
+Vue.component('helper-offset', Offset);
 Vue.config.productionTip = false;
 
 const config = {
@@ -25,6 +28,7 @@ const config = {
     storageBucket: 'task-manager-235704.appspot.com',
     messagingSenderId: '641099891992',
 };
+sync(store, router);
 new Vue({
     router,
     store,

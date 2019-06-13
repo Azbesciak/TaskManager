@@ -1,12 +1,15 @@
 import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
-import 'vuetify/src/stylus/app.styl';
+import Vuetify from 'vuetify';
+import 'vuetify/dist/vuetify.min.css'
+// import 'vuetify/src/stylus/app.styl';
 import 'vue-swatches/dist/vue-swatches.min.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import colors from 'vuetify/es5/util/colors';
 
+import theme from './theme'
 Vue.use(Vuetify, {
     iconfont: 'md' || 'fa',
+    theme
 });
 
 export const materialColors = getColors();
