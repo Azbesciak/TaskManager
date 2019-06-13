@@ -1,6 +1,6 @@
 <template>
     <v-container grid-list-md text-xs-center>
-        <v-layout>
+        <v-layout flex wrap>
             <dashboard-users :dashboard-id="id"></dashboard-users>
             <dashboard-view :dashboard-id="id" :dashboard-name="name"></dashboard-view>
         </v-layout>
