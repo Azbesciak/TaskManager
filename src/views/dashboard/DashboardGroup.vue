@@ -1,7 +1,7 @@
 <template>
     <v-card class="mx-auto"
             :color="color" max-width="400"
-            :dark="dark">
+            :dark="dark" id="dashboard-group-card">
         <v-card-title>
             <template v-if="nameEdit">
                 <dashboard-group-name-edit
@@ -86,18 +86,21 @@
     }
 </script>
 <style lang="scss">
-    .v-card__title {
-        padding: 2px;
-    }
+    #dashboard-group-card {
+        .v-card__title {
+            padding: 2px;
+        }
 
-    .full-width {
-        width: 100%;
-        background: rgba(245, 245, 245, 0.21);
+        .full-width {
+            width: 100%;
+            background: rgba(245, 245, 245, 0.21);
 
-        input {
-            text-align: center;
-            font-size: 20px;
-            font-weight: 700;
+            input {
+                text-align: center;
+                font-size: 20px;
+                font-weight: 700;
+            }
         }
     }
+
 </style>

@@ -1,15 +1,15 @@
 <template>
-    <v-container grid-list-md text-xs-center>
-        <v-layout flex wrap>
-            <dashboard-users :dashboard-id="id" xs12></dashboard-users>
-            <dashboard-view :dashboard-id="id" :dashboard-name="name"></dashboard-view>
-        </v-layout>
+    <v-container grid-list-md  text-xs-center>
+        <dashboard-users-list :dashboard-id="id"></dashboard-users-list>
+        <dashboard-view :dashboard-id="id" :dashboard-name="name"></dashboard-view>
+        <dashboard-actions-button></dashboard-actions-button>
     </v-container>
 </template>
 <script>
     import {mapGetters} from "vuex";
-    import DashboardUsers from "../dashboard-users/DashboardUsers";
     import DashboardView from "./DashboardView";
+    import DashboardActionsButton from "./DashboardActionsButton";
+    import DashboardUsersList from "../dashboard-users/DashboardUsersList";
 
     export default {
         created() {
@@ -25,7 +25,7 @@
             const {id, name} = this.$route.params;
             return {id, name};
         },
-        components: {DashboardView, DashboardUsers},
+        components: {DashboardUsersList, DashboardActionsButton, DashboardView},
         computed: mapGetters(['dashboard', 'loading']),
         methods: {
             selectDashboard() {

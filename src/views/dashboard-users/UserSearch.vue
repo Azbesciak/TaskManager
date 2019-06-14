@@ -30,10 +30,10 @@
 <script>
 
     import {queryUser} from "../../firebase/user";
+    import {mapGetters} from "vuex";
 
     export default {
         name: "UserSearch",
-        props: ['dashboardId'],
         data() {
             return {
                 loading: false,
@@ -47,14 +47,16 @@
                 if (user && typeof user === 'object') {
                     this.$store.dispatch("sendDashboardInvitation", {
                         user,
-                        dashboardId: this.dashboardId
+                        dashboardId: this.dashboard.id
                     });
                     this.items = [];
                     this.$refs.searchInput.reset();
                     this.value = null;
+                    this.$emit("close")
                 }
             }
         },
+        computed: mapGetters(["dashboard"]),
         methods: {
             searchUser() {
                 this.loading = true;
@@ -71,11 +73,14 @@
                     })
             }
         }
-
     }
 </script>
 
 <style>
+    .v-expansion-panel__header {
+        padding: 2px 18px;
+        min-height: 36px;
+    }
     .user-search.v-select.v-select--is-menu-active .v-icon {
         transform: none;
     }

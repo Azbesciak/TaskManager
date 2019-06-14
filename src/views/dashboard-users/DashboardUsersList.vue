@@ -1,22 +1,26 @@
-<template>
-    <div>
-        <v-list subheader v-if="showInvitations">
-            <v-subheader>Pending invitations</v-subheader>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+    <v-expansion-panel id="dashboard-users" expand>
+        <v-expansion-panel-content v-if="showInvitations">
+            <template v-slot:header>
+                <div>Pending invitations</div>
+            </template>
             <user-snapshot v-for="value in dashboardInvitedUsers" :user="value">
                 <v-btn icon flat @click.stop="cancelInvitation(value)">
                     <v-icon>delete</v-icon>
                 </v-btn>
             </user-snapshot>
-        </v-list>
-        <v-list subheader>
-            <v-subheader>Members</v-subheader>
+        </v-expansion-panel-content>
+        <v-expansion-panel-content>
+            <template v-slot:header>
+                <div>Members</div>
+            </template>
             <user-snapshot v-for="value in dashboardUsers" :user="value">
                 <v-btn icon flat @click.stop="removeUser(value)" v-if="canRemoveUser(value)">
                     <v-icon>delete</v-icon>
                 </v-btn>
             </user-snapshot>
-        </v-list>
-    </div>
+        </v-expansion-panel-content>
+    </v-expansion-panel>
 </template>
 
 <script>
@@ -49,6 +53,12 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss">
+    .v-expansion-panel {
+        box-shadow: none;
 
+        .v-expansion-panel__body {
+            margin-bottom: 10px;
+        }
+    }
 </style>
