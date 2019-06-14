@@ -8,7 +8,7 @@
                 @click="goToDashboard(value.id, value.name)"
         >
             <v-list-tile-content>
-                <v-list-tile-title v-html="value.name"></v-list-tile-title>
+                <v-list-tile-title v-html="value.name" class="dashboard-list-position"></v-list-tile-title>
             </v-list-tile-content>
             <v-btn icon flat small v-if="canRemove" @click.stop="removeDashboard(key)">
                 <v-icon>clear</v-icon>
@@ -36,7 +36,6 @@
                 goToDashboard(id, name)
             },
             goToDashboards() {
-                console.log("IS NAVIGABLE", this.navigable)
                 if (this.navigable)
                     goToDashboards();
             },
@@ -52,5 +51,8 @@
     }
     .navigable-divider {
         margin: -1px auto 4px !important;
+    }
+    .v-navigation-drawer .v-list .v-list__tile__title.dashboard-list-position {
+        font-size: 15px !important;
     }
 </style>
