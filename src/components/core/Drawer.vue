@@ -140,5 +140,8 @@
         div.v-responsive.v-image > div.v-responsive__content {
             overflow-y: auto;
         }
+        #dashboards-list {
+            padding: 0 15px;
+        }
     }
 </style>

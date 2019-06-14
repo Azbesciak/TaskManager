@@ -1,8 +1,9 @@
 <template>
-    <v-list subheader>
+    <v-list subheader id="dashboards-list">
         <v-subheader @click="goToDashboards()" v-bind:class="{navigable: navigable}">Your Dashboards</v-subheader>
         <v-divider v-bind:class="{'navigable-divider':navigable}"></v-divider>
         <v-list-tile
+                v-bind:class="{'success v-list__tile--active': dashboard && value.name == dashboard.name}"
                 v-for="value in userDashboards"
                 :key="value.id"
                 @click="goToDashboard(value.id, value.name)"
@@ -29,7 +30,7 @@
             createDashboardEnabled: false
         }),
         computed: {
-            ...mapGetters(["userDashboards"])
+            ...mapGetters(["userDashboards", "dashboard", "color"])
         },
         methods: {
             goToDashboard(id, name) {
@@ -49,10 +50,16 @@
     .navigable {
         cursor: pointer;
     }
+
     .navigable-divider {
         margin: -1px auto 4px !important;
     }
+
     .v-navigation-drawer .v-list .v-list__tile__title.dashboard-list-position {
         font-size: 15px !important;
+    }
+
+    div[role=listitem] {
+        border-radius: 4px;
     }
 </style>
