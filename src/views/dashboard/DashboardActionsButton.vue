@@ -1,5 +1,5 @@
 <template>
-    <v-layout>
+    <v-layout id="actions-button">
         <v-speed-dial
                 class="dashboard-actions-button"
                 v-model="fab"
@@ -84,5 +84,10 @@
     /* This is for documentation purposes and will not be needed in your application */
     .v-speed-dial {
         position: fixed;
+    }
+    #actions-button {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
     }
 </style>
