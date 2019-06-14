@@ -1,6 +1,6 @@
 <template>
     <v-container grid-list-md  text-xs-center>
-        <dashboard-users-list :dashboard-id="id"></dashboard-users-list>
+        <dashboard-users-list id="dashboard-users-list" :dashboard-id="id"></dashboard-users-list>
         <dashboard-view :dashboard-id="id" :dashboard-name="name"></dashboard-view>
         <dashboard-actions-button></dashboard-actions-button>
     </v-container>
@@ -34,3 +34,8 @@
         }
     }
 </script>
+<style>
+    #dashboard-users-list {
+        margin-bottom: 5px;
+    }
+</style>

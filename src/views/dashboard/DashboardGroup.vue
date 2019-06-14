@@ -2,7 +2,7 @@
     <v-card class="mx-auto"
             :color="color" max-width="400"
             :dark="dark" id="dashboard-group-card">
-        <v-card-title>
+        <v-card-title v-bind:class="{'name-edit':nameEdit}">
             <template v-if="nameEdit">
                 <dashboard-group-name-edit
                         :group="group" :group-id="groupId"

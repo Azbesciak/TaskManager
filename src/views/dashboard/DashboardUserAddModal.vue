@@ -27,13 +27,8 @@
                     return this.value
                 },
                 set(value) {
-                    this.$emit('input', value)
+                    this.$emit('close', value)
                 }
-            }
-        },
-        methods: {
-            onClose(user) {
-                console.log("user selected", user);
             }
         }
     }
