@@ -85,8 +85,4 @@
     .v-speed-dial {
         position: fixed;
     }
-
-    .v-btn--floating {
-        position: relative;
-    }
 </style>
