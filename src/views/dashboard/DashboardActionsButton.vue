@@ -29,17 +29,18 @@
                 <span>{{b.label}}</span>
             </v-tooltip>
         </v-speed-dial>
-        <DashboardUserAddModal v-model="modals.addUser" @close="modals.addUser = false"></DashboardUserAddModal>
-
+        <dashboard-user-add-modal v-model="modals.addUser" @close="modals.addUser = false"></dashboard-user-add-modal>
+        <dashboard-group-add-modal v-model="modals.addTask" @close="modals.addTask = false"></dashboard-group-add-modal>
     </v-layout>
 </template>
 
 <script>
     import DashboardUserAddModal from "./DashboardUserAddModal";
+    import DashboardGroupAddModal from "./DashboardGroupAddModal";
 
     export default {
         name: "DashboardActionsButton",
-        components: {DashboardUserAddModal},
+        components: {DashboardGroupAddModal, DashboardUserAddModal},
         props: ['dashboardId'],
         data() {
             const comp = this;
@@ -59,7 +60,7 @@
                         }
                     },
                     {
-                        color: 'indigo', icon: 'add', label: 'Add task', onClick: () => {
+                        color: 'indigo', icon: 'add', label: 'Add item', onClick: () => {
                             comp.modals.addTask = true
                         }
                     }
@@ -82,7 +83,7 @@
 <style>
     /* This is for documentation purposes and will not be needed in your application */
     .v-speed-dial {
-        position: absolute;
+        position: fixed;
     }
 
     .v-btn--floating {
